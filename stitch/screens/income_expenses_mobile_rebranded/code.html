@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container": "#eceef0",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#445aa3",
+                        "surface-container-high": "#e6e8ea",
+                        "on-primary-fixed-variant": "#2b4289",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-secondary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "tertiary-fixed": "#ffdbd1",
+                        "primary-container": "#012169",
+                        "outline-variant": "#c5c5d2",
+                        "primary": "#000f3c",
+                        "on-secondary-container": "#57657a",
+                        "surface-dim": "#d8dadc",
+                        "on-surface-variant": "#444651",
+                        "inverse-primary": "#b5c4ff",
+                        "on-primary-fixed": "#00164e",
+                        "tertiary": "#2c0600",
+                        "surface-variant": "#e0e3e5",
+                        "on-error-container": "#93000a",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#3a0a00",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "on-background": "#191c1e",
+                        "secondary-container": "#d5e3fc",
+                        "surface-container-highest": "#e0e3e5",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "secondary-fixed": "#d5e3fc",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary-fixed-variant": "#7a2f18",
+                        "primary-fixed": "#dce1ff",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb59f",
+                        "surface-bright": "#f7f9fb",
+                        "secondary": "#515f74",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "tertiary-container": "#501100",
+                        "primary-fixed-dim": "#b5c4ff",
+                        "surface": "#f7f9fb",
+                        "on-primary-container": "#768cd8",
+                        "on-tertiary-container": "#d47558",
+                        "inverse-surface": "#2d3133",
+                        "outline": "#757682",
+                        "error-container": "#ffdad6",
+                        "on-surface": "#191c1e"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 z-50 w-full bg-[#f7f9fb] dark:bg-[#000f3c] flex justify-between items-center px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#012169] dark:text-[#f2f4f6]" data-icon="account_balance">account_balance</span>
+<h1 class="font-manrope tracking-tight font-bold text-2xl text-[#012169] dark:text-[#f2f4f6]">Your Ledger</h1>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="Professional portrait of a financial advisor in a light-filled modern office, soft focus background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmKHDDDbBdnetPCm1zbV7ZeTOKhRF0WFQPbnxmm2PkHx3QjJ6V3nWIM9-2FyT9_WCNU3bH68kSerB6dhuJWXNlNJscBerpEsqU_fD75xG_5W_w5-vYQQ7OCmAQfptkDXvhT8ZvGqh-c-boitGiHwc8euN_xA1AxHR6RfUefEmFrY7jWQ5SuhBK0vNDoMswP9X5bju9bkdbCuLNJE_9qKF8UPrifjt2_jTvzUpKLnWWfGNEjCiUSlziWyX8c2Yqp8WIQUA8r9FsFCE"/>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-24 pb-32 px-6">
+<!-- Hero Section: Editorial Asymmetry -->
+<section class="mb-12">
+<div class="inline-block px-3 py-1 bg-primary-container text-on-primary-container rounded-full text-[10px] font-bold tracking-widest uppercase mb-4">
+                Analyze Your Cash Flow
+            </div>
+<h2 class="text-4xl font-extrabold tracking-tighter text-primary leading-none mb-2">Income &amp; Expenses</h2>
+<p class="text-on-surface-variant font-medium text-sm">See where you stand.</p>
+</section>
+<!-- Data Ribbon: High-Level Metrics -->
+<div class="w-full bg-primary text-white rounded-xl p-6 mb-8 flex justify-between items-center shadow-lg">
+<div>
+<p class="text-[10px] uppercase tracking-[0.2em] opacity-70 mb-1">Net Position</p>
+<p class="text-3xl font-bold tracking-tighter">+$4,280.00</p>
+</div>
+<div class="text-right">
+<span class="material-symbols-outlined text-surface-tint text-4xl" data-icon="query_stats">query_stats</span>
+</div>
+</div>
+<!-- Bento Grid: Income & Expenses Details -->
+<div class="grid grid-cols-1 gap-6">
+<!-- Monthly Inflow Section -->
+<div class="bg-surface-container-lowest rounded-xl p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-sm font-extrabold uppercase tracking-widest text-primary">Monthly Inflow</h3>
+<span class="material-symbols-outlined text-primary-container" data-icon="payments">payments</span>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-end pb-3">
+<div>
+<p class="text-xs text-on-surface-variant font-bold">Primary Salary</p>
+<p class="text-lg font-bold text-primary">$8,500.00</p>
+</div>
+<div class="h-1.5 w-24 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[85%]"></div>
+</div>
+</div>
+<div class="flex justify-between items-end pb-3">
+<div>
+<p class="text-xs text-on-surface-variant font-bold">Dividends &amp; Interest</p>
+<p class="text-lg font-bold text-primary">$1,240.00</p>
+</div>
+<div class="h-1.5 w-24 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[15%]"></div>
+</div>
+</div>
+<div class="flex justify-between items-end">
+<div>
+<p class="text-xs text-on-surface-variant font-bold">Rental Income</p>
+<p class="text-lg font-bold text-primary">$2,100.00</p>
+</div>
+<div class="h-1.5 w-24 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[25%]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Monthly Outflow Section -->
+<div class="bg-surface-container-low rounded-xl p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-sm font-extrabold uppercase tracking-widest text-primary">Monthly Outflow</h3>
+<span class="material-symbols-outlined text-error" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<div class="space-y-6">
+<!-- Outflow item with tonal shift instead of divider -->
+<div class="p-4 bg-surface-container-lowest rounded-lg flex justify-between items-center">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Mortgage &amp; Rent</p>
+<p class="text-xl font-bold text-primary">$3,450.00</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-30" data-icon="home">home</span>
+</div>
+<div class="p-4 bg-surface-container-lowest rounded-lg flex justify-between items-center">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Lifestyle &amp; Dining</p>
+<p class="text-xl font-bold text-primary">$1,820.00</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-30" data-icon="restaurant">restaurant</span>
+</div>
+<div class="p-4 bg-surface-container-lowest rounded-lg flex justify-between items-center">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Utilities &amp; Subs</p>
+<p class="text-xl font-bold text-primary">$410.00</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-30" data-icon="bolt">bolt</span>
+</div>
+</div>
+</div>
+<!-- Transactional Actions -->
+<div class="grid grid-cols-2 gap-4 mt-4">
+<button class="flex items-center justify-center gap-2 py-4 px-6 bg-primary text-white rounded-xl font-bold text-sm transition-transform active:scale-95 shadow-md">
+<span class="material-symbols-outlined text-sm" data-icon="save">save</span>
+                    Save Locally
+                </button>
+<button class="flex items-center justify-center gap-2 py-4 px-6 bg-surface-container-highest text-on-surface rounded-xl font-bold text-sm transition-transform active:scale-95">
+<span class="material-symbols-outlined text-sm" data-icon="file_download">file_download</span>
+                    Export JSON
+                </button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Context) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-white dark:bg-[#000f3c] flex justify-around items-center py-4 px-2 z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
+<div class="flex flex-col items-center gap-1 text-[#444651] dark:text-[#eceef0]">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Dashboard</span>
+</div>
+<!-- Active Tab: Income & Expenses -->
+<div class="flex flex-col items-center gap-1 text-[#012169] dark:text-white border-b-2 border-[#012169] dark:border-[#f2f4f6] pb-1">
+<span class="material-symbols-outlined" data-icon="payments" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Income</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-[#444651] dark:text-[#eceef0]">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Assets</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-[#444651] dark:text-[#eceef0]">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Results</span>
+</div>
+</nav>
+<!-- Footer (Suppressed on focused task, but kept for branding as requested) -->
+<footer class="w-full py-12 bg-[#000f3c] dark:bg-[#000820] flex flex-col items-center px-8 text-center mt-auto mb-20 md:mb-0">
+<h4 class="text-white font-bold tracking-tight text-lg mb-4">Your Ledger</h4>
+<div class="flex gap-6 mb-8">
+<a class="text-slate-400 hover:text-white font-manrope text-xs tracking-widest uppercase transition-opacity" href="#">Privacy Policy</a>
+<a class="text-slate-400 hover:text-white font-manrope text-xs tracking-widest uppercase transition-opacity" href="#">Terms of Service</a>
+</div>
+<p class="font-manrope text-[10px] tracking-widest uppercase opacity-50 text-white">
+            © 2024 Your Ledger. See where you stand.
+        </p>
+</footer>
+</body></html>

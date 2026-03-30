@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Assets &amp; Liabilities | Your Ledger</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container": "#eceef0",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#445aa3",
+                        "surface-container-high": "#e6e8ea",
+                        "on-primary-fixed-variant": "#2b4289",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-secondary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "tertiary-fixed": "#ffdbd1",
+                        "primary-container": "#012169",
+                        "outline-variant": "#c5c5d2",
+                        "primary": "#000f3c",
+                        "on-secondary-container": "#57657a",
+                        "surface-dim": "#d8dadc",
+                        "on-surface-variant": "#444651",
+                        "inverse-primary": "#b5c4ff",
+                        "on-primary-fixed": "#00164e",
+                        "tertiary": "#2c0600",
+                        "surface-variant": "#e0e3e5",
+                        "on-error-container": "#93000a",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#3a0a00",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "on-background": "#191c1e",
+                        "secondary-container": "#d5e3fc",
+                        "surface-container-highest": "#e0e3e5",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "secondary-fixed": "#d5e3fc",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary-fixed-variant": "#7a2f18",
+                        "primary-fixed": "#dce1ff",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb59f",
+                        "surface-bright": "#f7f9fb",
+                        "secondary": "#515f74",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "tertiary-container": "#501100",
+                        "primary-fixed-dim": "#b5c4ff",
+                        "surface": "#f7f9fb",
+                        "on-primary-container": "#768cd8",
+                        "on-tertiary-container": "#d47558",
+                        "inverse-surface": "#2d3133",
+                        "outline": "#757682",
+                        "error-container": "#ffdad6",
+                        "on-surface": "#191c1e"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex">
+<!-- NavigationDrawer (Shell Component) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col h-screen w-80 docked left-0 bg-[#ffffff] dark:bg-[#000f3c] border-r border-[#eceef0]/20 dark:border-[#012169]/20 shadow-xl dark:shadow-none z-40">
+<div class="p-8 flex flex-col gap-1">
+<h1 class="text-[#012169] dark:text-white font-bold font-manrope font-bold tracking-tight text-2xl">Your Ledger</h1>
+<p class="text-on-surface-variant text-xs font-medium tracking-wide uppercase">See where you stand.</p>
+</div>
+<nav class="flex-1 mt-4">
+<div class="space-y-1">
+<a class="flex items-center text-[#444651] dark:text-[#eceef0] py-3 px-6 font-manrope font-medium text-sm tracking-wide uppercase hover:bg-[#f2f4f6] dark:hover:bg-[#012169] transition-all duration-300" href="#">
+<span class="material-symbols-outlined mr-4">dashboard</span> Dashboard
+                </a>
+<a class="flex items-center text-[#444651] dark:text-[#eceef0] py-3 px-6 font-manrope font-medium text-sm tracking-wide uppercase hover:bg-[#f2f4f6] dark:hover:bg-[#012169] transition-all duration-300" href="#">
+<span class="material-symbols-outlined mr-4">payments</span> Income &amp; Expenses
+                </a>
+<!-- Active Tab: Assets & Liabilities -->
+<a class="flex items-center bg-[#012169] text-white rounded-r-full ml-0 mr-4 py-3 px-6 font-manrope font-medium text-sm tracking-wide uppercase transition-all duration-300" href="#">
+<span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span> Assets &amp; Liabilities
+                </a>
+<a class="flex items-center text-[#444651] dark:text-[#eceef0] py-3 px-6 font-manrope font-medium text-sm tracking-wide uppercase hover:bg-[#f2f4f6] dark:hover:bg-[#012169] transition-all duration-300" href="#">
+<span class="material-symbols-outlined mr-4">analytics</span> Results
+                </a>
+<a class="flex items-center text-[#444651] dark:text-[#eceef0] py-3 px-6 font-manrope font-medium text-sm tracking-wide uppercase hover:bg-[#f2f4f6] dark:hover:bg-[#012169] transition-all duration-300" href="#">
+<span class="material-symbols-outlined mr-4">query_stats</span> Scenarios
+                </a>
+<a class="flex items-center text-[#444651] dark:text-[#eceef0] py-3 px-6 font-manrope font-medium text-sm tracking-wide uppercase hover:bg-[#f2f4f6] dark:hover:bg-[#012169] transition-all duration-300" href="#">
+<span class="material-symbols-outlined mr-4">handshake</span> Lenders
+                </a>
+</div>
+</nav>
+<div class="p-6 mt-auto">
+<div class="flex items-center gap-4 p-4 rounded-xl bg-surface-container-low">
+<img alt="User" class="w-10 h-10 rounded-full bg-primary-container" data-alt="professional studio portrait of a financial advisor in a navy suit, clean corporate aesthetic, soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgxS1emtibz-SdAb-DoSbnsRE3mSoCL3c3S04SJHxBZVvzUkkh5EgbRxFh_nwpTCq4cgZR2oX37nqTO0ViBSIfGqiySP4ffwftzXK9sYLAYFemOHdE76HosFr8lQObVEBUtb9vRlrNKm6J367BEOD-BHLmBf4K9j7Ovg3qg6BXZN35rtiZTFD4jSgIwICefCXoo9cvSy6PHR0hMsoiCKaZBqz5YknM7jypn96oZL_8t-vuUhx2IaTnrChnawj3q3Pf46n-Yr3vF54"/>
+<div>
+<p class="font-bold text-sm text-primary">Alex Sterling</p>
+<p class="text-xs text-on-surface-variant">Institutional Tier</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-80 flex flex-col min-h-screen">
+<!-- TopAppBar (Shell Component) -->
+<header class="sticky top-0 z-50 bg-[#f7f9fb] dark:bg-[#000f3c] flex justify-between items-center w-full px-8 py-4 max-w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#012169] dark:text-[#f2f4f6] text-3xl">account_balance</span>
+<h2 class="font-manrope tracking-tight font-bold text-2xl text-[#012169] dark:text-[#f2f4f6]">Your Ledger</h2>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden lg:flex items-center gap-8">
+<a class="text-[#012169] dark:text-white border-b-2 border-[#012169] dark:border-[#f2f4f6] font-semibold text-sm py-1" href="#">Portfolio</a>
+<a class="text-[#444651] dark:text-[#eceef0] hover:text-[#012169] font-medium text-sm py-1 transition-colors" href="#">Market Analysis</a>
+<a class="text-[#444651] dark:text-[#eceef0] hover:text-[#012169] font-medium text-sm py-1 transition-colors" href="#">Reporting</a>
+</nav>
+<div class="w-10 h-10 rounded-full bg-surface-container-high border-2 border-white shadow-sm overflow-hidden">
+<img alt="User Profile Avatar" data-alt="minimalist profile avatar placeholder with navy and white color palette" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkN8cbNIap5hAaTsUqsmIU-XBt4PgYBtz6-J4NvgWoQRTfg57-CWKaK74w66Ku_f1SBavdkr42LNlg9AJxzW1F_BlmnDYcydaA3iRXSR6wdgwkvXCjYhM7Iw_zcaak3VBdjEzhf_jp8Z-p3-jktUNYoHisiZs4_j2Dhro_7tI2y8cPxJEO9CrGUlE2QOBgoGWGto2fHwoBeaBUvDsQSpHuBoWjy5gLw3CSbbX5lg19YPf36ejA0PwqVaTUoNYuolZ1DARXEC0wZIw"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="p-12 space-y-12 max-w-7xl mx-auto w-full">
+<!-- Header Section (Asymmetrical Layout) -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-8">
+<div class="max-w-2xl">
+<span class="text-surface-tint font-bold tracking-widest text-xs uppercase block mb-2">Institutional Asset Management</span>
+<h1 class="text-5xl font-extrabold tracking-tighter text-primary font-headline leading-none">Assets &amp; Liabilities</h1>
+<p class="mt-4 text-on-surface-variant text-lg font-medium leading-relaxed">
+                        A definitive architectural overview of your current real estate holdings and associated financial obligations.
+                    </p>
+</div>
+<div class="bg-primary text-white p-8 rounded-xl shadow-2xl flex flex-col gap-1 min-w-[320px]">
+<span class="text-blue-300 text-xs font-bold uppercase tracking-widest">Net Position</span>
+<span class="text-4xl font-black tracking-tighter">$4,850,000.00</span>
+<div class="mt-4 flex items-center gap-2 text-emerald-400 font-bold">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="text-sm">+2.4% vs last quarter</span>
+</div>
+</div>
+</section>
+<!-- Grid Layout: Assets & Capacity -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Left Column: Property Cards (Bento Style) -->
+<div class="lg:col-span-2 space-y-8">
+<div class="flex items-center justify-between mb-2">
+<h3 class="text-xl font-bold text-primary tracking-tight">Real Estate Asset Estimator</h3>
+<button class="text-surface-tint font-bold text-sm flex items-center gap-2 hover:underline">
+<span class="material-symbols-outlined text-lg">add_circle</span> Add Asset
+                        </button>
+</div>
+<!-- Property Card 1 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col md:flex-row transition-all hover:bg-white border-transparent hover:border-outline-variant/30 border-2">
+<div class="w-full md:w-64 h-48 md:h-auto overflow-hidden relative">
+<img alt="Bayview Heights" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="ultra-modern luxury villa with glass walls at dusk, warm interior lighting reflecting on a sleek infinity pool, architectural photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVIBFFgiNlzHlPC9iRCrs2qYOu1t31We5XXRsxH-BItuICOrTn7vJzLQGDqG9g0IXYYkjwMFadP0Pl2mJ5eO8Xy-sTDvl56MJ5Vc8lVH1HJo6r7IzZEho_YThvTYfljFawpjfuiNS6XG8iGaJ4POx9s2-d1-zV6YRk9U1THkce__ap-mUR996_C87i2g_lk6jafdP0mgtSeaZ0Ppex0MAkP8TLOoBRWu-lVcyvtAhDfIcC4AZN02L45fP9KRtIPArMQYTZPEBxeh4"/>
+<div class="absolute top-4 left-4 bg-primary/80 backdrop-blur-md text-white text-[10px] font-black px-2 py-1 uppercase tracking-widest rounded">Primary Residence</div>
+</div>
+<div class="flex-1 p-8 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h4 class="text-2xl font-bold text-primary tracking-tight">Bayview Heights Estate</h4>
+<span class="text-xs font-bold text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">ID: BH-992</span>
+</div>
+<p class="text-on-surface-variant text-sm mt-1">128 Ocean Terrace, New South Wales</p>
+<div class="grid grid-cols-2 gap-8 mt-8">
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Estimated Value</p>
+<p class="text-2xl font-black text-primary">$3,250,000</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Mortgage Balance</p>
+<p class="text-2xl font-black text-on-surface-variant">$1,100,000</p>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-surface-container flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">bed</span>
+<span class="text-xs font-bold">5</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">bathtub</span>
+<span class="text-xs font-bold">4</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">garage</span>
+<span class="text-xs font-bold">3</span>
+</div>
+</div>
+<button class="bg-surface-container-highest text-primary font-bold px-4 py-2 rounded text-xs hover:bg-primary hover:text-white transition-colors">Manage Asset</button>
+</div>
+</div>
+</div>
+<!-- Property Card 2 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col md:flex-row transition-all hover:bg-white border-transparent hover:border-outline-variant/30 border-2">
+<div class="w-full md:w-64 h-48 md:h-auto overflow-hidden relative">
+<img alt="Collins St Penthouse" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="chic contemporary penthouse interior with floor to ceiling windows overlooking a metropolitan skyline at night, cinematic lighting, editorial style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeI9GD0URxp0ntD7cvhjuKVAGDn73sX2ZfRlUe8JvDcc02mo0scLmrYNLyu8hZVhwhT5S5i3-RvPVbEk7oDZDH_IjTKrMGy5SJIpl_UT0ZT7cbeKdvZqgPQ3jrnqj4auNwtJXrbrK9u-BtCPUeRR4N9Cw6hr_xUMh-IdyWv-5vF969u9_ZYFHPkw6k4Li6OiYuTKwjSFBoDdNoA5uZ0zVi1X2dQ_WPkyzsmbEZuVcbbg6ARHy_qMymlCZOfRG09LXVwcHytfyzECc"/>
+<div class="absolute top-4 left-4 bg-surface-tint/80 backdrop-blur-md text-white text-[10px] font-black px-2 py-1 uppercase tracking-widest rounded">Investment</div>
+</div>
+<div class="flex-1 p-8 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h4 class="text-2xl font-bold text-primary tracking-tight">Collins St Penthouse</h4>
+<span class="text-xs font-bold text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">ID: CP-401</span>
+</div>
+<p class="text-on-surface-variant text-sm mt-1">401/12 Collins St, Melbourne VIC</p>
+<div class="grid grid-cols-2 gap-8 mt-8">
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Estimated Value</p>
+<p class="text-2xl font-black text-primary">$2,700,000</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Mortgage Balance</p>
+<p class="text-2xl font-black text-on-surface-variant">$0.00</p>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-surface-container flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">bed</span>
+<span class="text-xs font-bold">3</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">bathtub</span>
+<span class="text-xs font-bold">2</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">garage</span>
+<span class="text-xs font-bold">1</span>
+</div>
+</div>
+<button class="bg-surface-container-highest text-primary font-bold px-4 py-2 rounded text-xs hover:bg-primary hover:text-white transition-colors">Manage Asset</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Aggregate Capacity Estimation -->
+<div class="space-y-8">
+<div class="bg-[#012169] bg-gradient-to-br from-[#012169] to-[#000f3c] text-white p-10 rounded-xl shadow-xl flex flex-col gap-8 h-full">
+<div class="space-y-2">
+<h3 class="text-2xl font-black tracking-tight leading-tight">Aggregate Capacity Estimation</h3>
+<p class="text-blue-200/70 text-sm leading-relaxed">Derived from your combined asset leverage and liquidity ratios.</p>
+</div>
+<div class="space-y-6">
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold uppercase tracking-widest text-blue-200">
+<span>Borrowing Power</span>
+<span>82% of Limit</span>
+</div>
+<div class="h-3 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-surface-tint w-[82%] rounded-full shadow-[0_0_12px_rgba(68,90,163,0.5)]"></div>
+</div>
+</div>
+<div class="p-6 bg-white/5 rounded-lg border border-white/10 space-y-4">
+<div>
+<p class="text-[10px] font-bold text-blue-200 uppercase tracking-widest">Total Asset Value</p>
+<p class="text-3xl font-black">$5,950,000</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-blue-200 uppercase tracking-widest">Total Liabilities</p>
+<p class="text-2xl font-black text-red-400">$1,100,000</p>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-emerald-400">check_circle</span>
+<p class="text-sm font-medium">Debt-to-Equity: 18.4% (Optimal)</p>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-emerald-400">check_circle</span>
+<p class="text-sm font-medium">Available Liquidity: $420,000</p>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-blue-300">info</span>
+<p class="text-sm font-medium">Next Valuation: Oct 2024</p>
+</div>
+</div>
+</div>
+<button class="mt-auto w-full py-4 bg-white text-[#000f3c] font-black rounded-lg uppercase tracking-widest text-xs hover:bg-blue-50 transition-colors shadow-lg shadow-black/20">
+                            Generate Full Statement
+                        </button>
+</div>
+</div>
+</div>
+<!-- Detailed Table: Other Assets (Institutional List Style) -->
+<section class="space-y-6 pt-8">
+<div class="flex items-center justify-between">
+<h3 class="text-xl font-bold text-primary tracking-tight">Ancillary Assets &amp; Private Equity</h3>
+<div class="flex gap-4">
+<button class="text-xs font-bold text-on-surface-variant flex items-center gap-2 px-4 py-2 bg-surface-container rounded transition-all hover:bg-surface-container-high">
+<span class="material-symbols-outlined text-sm">filter_list</span> Filter
+                        </button>
+<button class="text-xs font-bold text-on-surface-variant flex items-center gap-2 px-4 py-2 bg-surface-container rounded transition-all hover:bg-surface-container-high">
+<span class="material-symbols-outlined text-sm">download</span> Export CSV
+                        </button>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-surface-container">
+<th class="py-5 px-8 text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Asset Class</th>
+<th class="py-5 px-8 text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Description</th>
+<th class="py-5 px-8 text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Holding Entity</th>
+<th class="py-5 px-8 text-[10px] font-black text-on-surface-variant uppercase tracking-widest text-right">Value (AUD)</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container/50">
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="py-5 px-8">
+<span class="px-2 py-1 bg-blue-100 text-blue-800 text-[10px] font-black rounded uppercase tracking-tighter">Private Equity</span>
+</td>
+<td class="py-5 px-8 font-bold text-primary">TechVentures Series B</td>
+<td class="py-5 px-8 text-on-surface-variant text-sm">Sterling Family Trust</td>
+<td class="py-5 px-8 text-right font-black text-primary">$450,000</td>
+</tr>
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="py-5 px-8">
+<span class="px-2 py-1 bg-amber-100 text-amber-800 text-[10px] font-black rounded uppercase tracking-tighter">Commodities</span>
+</td>
+<td class="py-5 px-8 font-bold text-primary">Physical Gold Bullion</td>
+<td class="py-5 px-8 text-on-surface-variant text-sm">Direct Ownership</td>
+<td class="py-5 px-8 text-right font-black text-primary">$125,500</td>
+</tr>
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="py-5 px-8">
+<span class="px-2 py-1 bg-emerald-100 text-emerald-800 text-[10px] font-black rounded uppercase tracking-tighter">Cash Equivalents</span>
+</td>
+<td class="py-5 px-8 font-bold text-primary">High-Yield Treasury Fund</td>
+<td class="py-5 px-8 text-on-surface-variant text-sm">Institutional Cash Management</td>
+<td class="py-5 px-8 text-right font-black text-primary">$892,000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+<!-- Footer (Shell Component) -->
+<footer class="bg-[#000f3c] dark:bg-[#000820] w-full py-12 mt-auto border-t border-[#012169] flex flex-col md:flex-row justify-between items-center px-12">
+<div class="flex flex-col items-center md:items-start gap-2 mb-8 md:mb-0">
+<span class="text-white font-bold tracking-tight text-xl">Your Ledger</span>
+<p class="font-manrope text-xs tracking-widest uppercase opacity-70 text-white">© 2024 Your Ledger. See where you stand.</p>
+</div>
+<div class="flex gap-10">
+<a class="font-manrope text-xs tracking-widest uppercase text-slate-400 hover:text-white transition-opacity" href="#">Privacy Policy</a>
+<a class="font-manrope text-xs tracking-widest uppercase text-slate-400 hover:text-white transition-opacity" href="#">Terms of Service</a>
+<a class="font-manrope text-xs tracking-widest uppercase text-slate-400 hover:text-white transition-opacity" href="#">Contact Support</a>
+</div>
+</footer>
+</main>
+</body></html>

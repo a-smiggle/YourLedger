@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>About Us | Your Ledger</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container": "#eceef0",
+              "on-primary": "#ffffff",
+              "surface-tint": "#445aa3",
+              "surface-container-high": "#e6e8ea",
+              "on-primary-fixed-variant": "#2b4289",
+              "inverse-on-surface": "#eff1f3",
+              "on-secondary": "#ffffff",
+              "background": "#f7f9fb",
+              "tertiary-fixed": "#ffdbd1",
+              "primary-container": "#012169",
+              "outline-variant": "#c5c5d2",
+              "primary": "#000f3c",
+              "on-secondary-container": "#57657a",
+              "surface-dim": "#d8dadc",
+              "on-surface-variant": "#444651",
+              "inverse-primary": "#b5c4ff",
+              "on-primary-fixed": "#00164e",
+              "tertiary": "#2c0600",
+              "surface-variant": "#e0e3e5",
+              "on-error-container": "#93000a",
+              "on-tertiary": "#ffffff",
+              "error": "#ba1a1a",
+              "on-tertiary-fixed": "#3a0a00",
+              "on-secondary-fixed": "#0d1c2e",
+              "on-background": "#191c1e",
+              "secondary-container": "#d5e3fc",
+              "surface-container-highest": "#e0e3e5",
+              "secondary-fixed-dim": "#b9c7df",
+              "secondary-fixed": "#d5e3fc",
+              "surface-container-low": "#f2f4f6",
+              "on-tertiary-fixed-variant": "#7a2f18",
+              "primary-fixed": "#dce1ff",
+              "on-error": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-fixed-dim": "#ffb59f",
+              "surface-bright": "#f7f9fb",
+              "secondary": "#515f74",
+              "on-secondary-fixed-variant": "#3a485b",
+              "tertiary-container": "#501100",
+              "primary-fixed-dim": "#b5c4ff",
+              "surface": "#f7f9fb",
+              "on-primary-container": "#768cd8",
+              "on-tertiary-container": "#d47558",
+              "inverse-surface": "#2d3133",
+              "outline": "#757682",
+              "error-container": "#ffdad6",
+              "on-surface": "#191c1e"
+            },
+            fontFamily: {
+              "headline": ["Manrope", "sans-serif"],
+              "body": ["Manrope", "sans-serif"],
+              "label": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary">
+<!-- TopAppBar -->
+<header class="fixed top-0 z-50 w-full bg-[#f7f9fb] dark:bg-[#000f3c] flex justify-between items-center px-8 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#012169] dark:text-[#f2f4f6] text-3xl">account_balance</span>
+<h1 class="font-manrope tracking-tight font-bold text-2xl text-[#012169] dark:text-[#f2f4f6]">Your Ledger</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-[#444651] dark:text-[#eceef0] font-manrope font-medium text-sm tracking-wide uppercase hover:bg-[#eceef0] dark:hover:bg-[#012169] transition-colors px-3 py-2 rounded" href="#">Dashboard</a>
+<a class="text-[#444651] dark:text-[#eceef0] font-manrope font-medium text-sm tracking-wide uppercase hover:bg-[#eceef0] dark:hover:bg-[#012169] transition-colors px-3 py-2 rounded" href="#">Results</a>
+<a class="text-[#012169] dark:text-white border-b-2 border-[#012169] dark:border-[#f2f4f6] font-manrope font-medium text-sm tracking-wide uppercase px-3 py-2" href="#">About Us</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="User profile avatar" data-alt="close-up professional portrait of a financial executive in a modern glass office environment with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfPSjkKzHWA2uvFijrrIBW3rheVaIfuntSXd2-lE7e71CUluwxXe3c9fgmIBYb4NGZiuYJGErOBqjTeIyU7kY5tcJGe3GMt9BFDeA4nTP4vuKT92Lb-9SV_BYBBoByfP9e8Y_j-JNfCGBF18nV-xk3JhgyuBh5MXWlAlzKfKg-sjyEZHfSqlDFK14VYuH58GDWNuFo5Btl-W3WPmvEMRO0ASFNC-rST1TZAevwWAFVhU6tpOb9Mt1dNlBrseEJKU2iV8ctUZW9f34"/>
+</div>
+</div>
+</header>
+<!-- Navigation Drawer (Left Anchor) -->
+<aside class="fixed left-0 top-0 h-full w-80 bg-[#ffffff] dark:bg-[#000f3c] border-r border-[#eceef0]/20 dark:border-[#012169]/20 shadow-xl dark:shadow-none hidden lg:flex flex-col z-40 pt-24">
+<div class="px-8 mb-10">
+<h2 class="text-[#012169] dark:text-white font-bold text-xl">Your Ledger</h2>
+<p class="text-on-surface-variant text-xs mt-1">See where you stand.</p>
+</div>
+<nav class="flex-1 flex flex-col">
+<a class="flex items-center gap-4 text-[#444651] dark:text-[#eceef0] py-3 px-8 font-manrope font-medium text-sm tracking-wide uppercase hover:bg-[#f2f4f6] dark:hover:bg-[#012169] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center gap-4 text-[#444651] dark:text-[#eceef0] py-3 px-8 font-manrope font-medium text-sm tracking-wide uppercase hover:bg-[#f2f4f6] dark:hover:bg-[#012169] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">payments</span> Income &amp; Expenses
+            </a>
+<a class="flex items-center gap-4 text-[#444651] dark:text-[#eceef0] py-3 px-8 font-manrope font-medium text-sm tracking-wide uppercase hover:bg-[#f2f4f6] dark:hover:bg-[#012169] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span> Assets &amp; Liabilities
+            </a>
+<a class="flex items-center gap-4 text-[#444651] dark:text-[#eceef0] py-3 px-8 font-manrope font-medium text-sm tracking-wide uppercase hover:bg-[#f2f4f6] dark:hover:bg-[#012169] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">analytics</span> Results
+            </a>
+<a class="flex items-center gap-4 text-[#444651] dark:text-[#eceef0] py-3 px-8 font-manrope font-medium text-sm tracking-wide uppercase hover:bg-[#f2f4f6] dark:hover:bg-[#012169] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">query_stats</span> Scenarios
+            </a>
+<a class="flex items-center gap-4 text-[#444651] dark:text-[#eceef0] py-3 px-8 font-manrope font-medium text-sm tracking-wide uppercase hover:bg-[#f2f4f6] dark:hover:bg-[#012169] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">handshake</span> Lenders
+            </a>
+<a class="flex items-center gap-4 bg-[#012169] text-white rounded-r-full ml-0 mr-4 py-3 px-8 font-manrope font-medium text-sm tracking-wide uppercase transition-all duration-300" href="#">
+<span class="material-symbols-outlined">info</span> About Us
+            </a>
+<a class="flex items-center gap-4 text-[#444651] dark:text-[#eceef0] py-3 px-8 font-manrope font-medium text-sm tracking-wide uppercase hover:bg-[#f2f4f6] dark:hover:bg-[#012169] transition-all duration-300 mt-auto mb-8" href="#">
+<span class="material-symbols-outlined">settings</span> Settings
+            </a>
+</nav>
+</aside>
+<!-- Main Content Canvas -->
+<main class="lg:ml-80 pt-24 min-h-screen bg-surface">
+<!-- Hero Section: Editorial Asymmetry -->
+<section class="px-8 md:px-16 py-12 md:py-24 grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+<div class="md:col-span-7">
+<span class="text-primary font-bold tracking-widest uppercase text-xs mb-4 block">Institutional Integrity</span>
+<h2 class="text-6xl md:text-8xl font-black text-primary tracking-tighter leading-none mb-8">
+                    Architecture <br/>of Wealth.
+                </h2>
+<p class="text-xl text-on-surface-variant font-medium leading-relaxed max-w-xl mb-10">
+                    Your Ledger is not just a dashboard; it is a structural foundation for your financial future. We build the systems that let you see exactly where you stand, with no distortion.
+                </p>
+<div class="flex gap-6">
+<button class="bg-gradient-to-br from-primary-container to-primary text-white px-10 py-4 font-bold tracking-tight rounded-none flex items-center gap-3">
+                        Our Vision <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<div class="md:col-span-5 relative h-[500px]">
+<div class="absolute inset-0 bg-primary-container rotate-3 translate-x-4 translate-y-4"></div>
+<img alt="Modern architecture" class="absolute inset-0 w-full h-full object-cover" data-alt="Modern geometric skyscraper facade with reflective blue glass windows against a clear sky, showing clean architectural lines" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkvLud62s3NJjXU4tlt8fwV-2Oq8rmIpwsZ_4WCkzec1betV74Gg4_NZ02uiiCiZj9N6BcuwfGG0keWl3IhTGntXXDWyChAGv-Un_B-gxU_ZS4bOOjt-7rg0x3RSpnqHT10d9i0eAQl26fgsA6-jr4-7Iod3pQSrH3lo5Jen5WDaWqlmg0DPqA3rDFy8i87DqKNQ0M55FdoDLJ3GgV3pceqPSo7VsF2FuIgZp0SrC4YYGTxCw3U4ZFaL0GPoYTiaZwIUugQvVl9RA"/>
+</div>
+</section>
+<!-- Bento Grid: Values & Pillars -->
+<section class="bg-surface-container-low px-8 md:px-16 py-20">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Column 1: Vertical Focus -->
+<div class="md:row-span-2 bg-surface-container-lowest p-12 flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-surface-tint text-5xl mb-8">architecture</span>
+<h3 class="text-3xl font-bold text-primary tracking-tight mb-6">Designed for Precision</h3>
+<p class="text-on-surface-variant leading-relaxed">
+                            Every pixel in Your Ledger is engineered to reduce cognitive load. Financial clarity is achieved when data is presented without the noise of traditional banking interfaces.
+                        </p>
+</div>
+<div class="mt-12 text-sm font-bold tracking-widest uppercase text-primary border-t border-outline-variant pt-6">
+                        Pillar 01: Geometry
+                    </div>
+</div>
+<!-- Column 2 & 3: Horizontal Spread -->
+<div class="md:col-span-2 bg-primary text-white p-12 flex flex-col md:flex-row gap-12 items-center">
+<div class="flex-1">
+<h3 class="text-4xl font-bold tracking-tighter mb-4">The Institutional Standard.</h3>
+<p class="opacity-80 leading-relaxed mb-6 text-lg">
+                            We bring the level of analysis typically reserved for private family offices to your personal screen.
+                        </p>
+</div>
+<div class="w-full md:w-64 h-48 bg-surface-container-highest/10 relative overflow-hidden group">
+<img alt="Institutional glass" class="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-110" data-alt="Interior of a modern financial office with floor-to-ceiling glass windows and minimalist furniture at dusk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5QOuNarb81zb6nWidozjC9Rg_m-moeX8J_ixOhyQrelCvzdcU0gmaZ5IZPhVDsfOS1lBH8l5dDSXbCjLhUaFAqG0QYi33GEDB4srEUTgeOGTSN_DUJIRc9FSzfztgBZYvnGZAZVBg-Avtja9tbxL9UpzCYCJYTRYkMgdWEKz1BpZoZ0tzwydCYpa6na10tSX3WBACX4g1IjxWQw2do8mDF583CNcZ0Ca8_mX4r_41jeliXXXBi1zzGjrdnmDv0AvG6PTjyshCJLs"/>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-12">
+<span class="material-symbols-outlined text-surface-tint text-4xl mb-6">shield_with_heart</span>
+<h4 class="text-xl font-bold text-primary mb-4">Unshakeable Trust</h4>
+<p class="text-on-surface-variant text-sm leading-relaxed">
+                        Security is our foundation. We use sovereign-grade encryption to ensure your financial story remains yours alone.
+                    </p>
+</div>
+<div class="bg-surface-container-lowest p-12">
+<span class="material-symbols-outlined text-surface-tint text-4xl mb-6">insights</span>
+<h4 class="text-xl font-bold text-primary mb-4">Clarity Above All</h4>
+<p class="text-on-surface-variant text-sm leading-relaxed">
+                        We don't just show numbers; we show paths. Our algorithms highlight the most efficient way to leverage your assets.
+                    </p>
+</div>
+</div>
+</section>
+<!-- The "No-Divider" Team Section -->
+<section class="px-8 md:px-16 py-24 bg-surface">
+<div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+<div class="max-w-xl">
+<h2 class="text-5xl font-bold text-primary tracking-tight mb-4">The Architects.</h2>
+<p class="text-on-surface-variant text-lg font-medium">Meet the minds behind Your Ledger.</p>
+</div>
+<div class="text-right">
+<span class="text-9xl font-black text-surface-container tracking-tighter select-none">TEAM</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+<!-- Team Member -->
+<div class="group">
+<div class="aspect-[3/4] bg-surface-container-low mb-6 overflow-hidden">
+<img alt="Founder" class="w-full h-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0" data-alt="portrait of a confident man in his 40s wearing a dark navy suit against a soft gray backdrop" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAykb-Z8uKgn4sNkTDawD4K-RgffU2WUwBAwsoH0V2OMw1HfzvGwkaRnUriXGSVpBUM4JprE_gk6Q-1YRhnRiG-SXKncirngXdA5B0Z-rHGppQOiiwL4uc48_C6SwSCtP8p6lM2934M0j-drfgL476SsYC53ZWr9oj7_BL1TeIyThjDO9qWZGEaaAhzaw-sBDD7C73I37V4pNTAnYh1pNjVnqFd66RHcbLnrNxHOGDxZgoPr9eDX_Vjr6F1IsS_xrAebvYjWRiCUrw"/>
+</div>
+<h4 class="text-lg font-bold text-primary">Julian Vance</h4>
+<p class="text-on-surface-variant text-xs uppercase tracking-widest font-semibold mt-1">Chief Strategist</p>
+</div>
+<div class="group">
+<div class="aspect-[3/4] bg-surface-container-low mb-6 overflow-hidden">
+<img alt="CTO" class="w-full h-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0" data-alt="professional portrait of a woman with glasses in a light gray blazer, looking directly at the camera with a slight smile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuFLcVPCNPrOrh6Aoix-2vo4bFdYIR-dVlyGwmWeiapin8mbxI1i-Y8btv83C0rlbO2pqatIILgq9XCJcAa4ZL6Ir30eGHZorgFiLKVh_ECMA9D8PPzXq7j13YuO7KLYWoVhh3jAxIpnR92cVYCG_YQxWDZNWsZ3uXkEsUwvU-Jtz6I2xTeWCNv8Cqec0Msz0SstD9cehdD5-8wQpsKKm_adr0nj8TLqsTvrXKPuQCHRcz2XHkp2p3zZjkYnQ7Q5FqlcPTi07nUpw"/>
+</div>
+<h4 class="text-lg font-bold text-primary">Sarah Chen</h4>
+<p class="text-on-surface-variant text-xs uppercase tracking-widest font-semibold mt-1">Head of Architecture</p>
+</div>
+<div class="group">
+<div class="aspect-[3/4] bg-surface-container-low mb-6 overflow-hidden">
+<img alt="Lead Designer" class="w-full h-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0" data-alt="portrait of a young creative man with a beard wearing a black turtleneck in a minimalist studio setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_aQdum7dTTeLLb1OV7e7F7RmzL-HbG19Xyi8uLWUaLXIk-7VdFjJZHF0yl3BlfRTF4Qn8eQC20xhPgWC1VqLABcF-cVBg07McmwydtIXIXA2EgExKGYwPKwjsYc24PxhP5cjeGSuNmo9wFeb_hQ7KukSjbtg7CrsClxckPa0gpy3C6YdI4YK-XPq9-TfZEFmCFDgaEsbfc30ZhvQ43tuVCoyy7tygl6WYbHKBA0V6n_YvRnpIMCmpoyN4SQ0UWe5FGjR7VR45yVE"/>
+</div>
+<h4 class="text-lg font-bold text-primary">Marcus Thorne</h4>
+<p class="text-on-surface-variant text-xs uppercase tracking-widest font-semibold mt-1">Design Director</p>
+</div>
+<div class="group">
+<div class="aspect-[3/4] bg-surface-container-low mb-6 overflow-hidden">
+<img alt="Analyst" class="w-full h-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0" data-alt="portrait of a mature woman with silver hair in a professional blue silk blouse in a brightly lit office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPhQNRkxvqux_HZTc9Io-UvON71Od8mhyTyuQWPZXWx8i8wvezQ7ITxW_dyNg2R_F78SkRJ2Z1ull4wwTBc_n27CXh9qNPev-NLBf870pGAGU1Y5YJDEDYZOjcFbfSWcw2pnuweWnMnwdcxB3LMrDUzEiQPO18QEBgCUrGAlXgatS5yjMygKbcRdfuCDF0tf6dvxGOs0z3gDaOOugkoO1n4-zi8xulyG8AAdoJzzu1geA8RN5cKI1G2E823iLKfPcvGNeh4VGYBmo"/>
+</div>
+<h4 class="text-lg font-bold text-primary">Elena Rodriguez</h4>
+<p class="text-on-surface-variant text-xs uppercase tracking-widest font-semibold mt-1">Lead Financial Analyst</p>
+</div>
+</div>
+</section>
+<!-- Institutional CTA Ribbon -->
+<section class="w-full bg-primary text-white py-20 px-8 text-center">
+<h2 class="text-4xl font-bold tracking-tight mb-8">Ready to define your structure?</h2>
+<button class="bg-surface-container-lowest text-primary px-12 py-5 font-bold tracking-widest uppercase text-sm hover:bg-surface-tint hover:text-white transition-all">
+                Access Dashboard
+            </button>
+</section>
+</main>
+<!-- Footer -->
+<footer class="lg:ml-80 w-auto py-12 bg-[#000f3c] dark:bg-[#000820] text-white border-t border-[#012169] flex flex-col md:flex-row justify-between items-center px-12">
+<div class="mb-6 md:mb-0">
+<span class="text-white font-bold tracking-tight text-lg">Your Ledger.</span>
+<p class="font-manrope text-xs tracking-widest uppercase opacity-70 mt-2">© 2024 Your Ledger. See where you stand.</p>
+</div>
+<div class="flex gap-10">
+<a class="font-manrope text-xs tracking-widest uppercase opacity-70 text-slate-400 hover:text-white transition-opacity" href="#">Privacy Policy</a>
+<a class="font-manrope text-xs tracking-widest uppercase opacity-70 text-slate-400 hover:text-white transition-opacity" href="#">Terms of Service</a>
+<a class="font-manrope text-xs tracking-widest uppercase opacity-70 text-slate-400 hover:text-white transition-opacity" href="#">Contact Support</a>
+</div>
+</footer>
+</body></html>

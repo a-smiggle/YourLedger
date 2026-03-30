@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container": "#eceef0",
+              "on-primary": "#ffffff",
+              "surface-tint": "#445aa3",
+              "surface-container-high": "#e6e8ea",
+              "on-primary-fixed-variant": "#2b4289",
+              "inverse-on-surface": "#eff1f3",
+              "on-secondary": "#ffffff",
+              "background": "#f7f9fb",
+              "tertiary-fixed": "#ffdbd1",
+              "primary-container": "#012169",
+              "outline-variant": "#c5c5d2",
+              "primary": "#000f3c",
+              "on-secondary-container": "#57657a",
+              "surface-dim": "#d8dadc",
+              "on-surface-variant": "#444651",
+              "inverse-primary": "#b5c4ff",
+              "on-primary-fixed": "#00164e",
+              "tertiary": "#2c0600",
+              "surface-variant": "#e0e3e5",
+              "on-error-container": "#93000a",
+              "on-tertiary": "#ffffff",
+              "error": "#ba1a1a",
+              "on-tertiary-fixed": "#3a0a00",
+              "on-secondary-fixed": "#0d1c2e",
+              "on-background": "#191c1e",
+              "secondary-container": "#d5e3fc",
+              "surface-container-highest": "#e0e3e5",
+              "secondary-fixed-dim": "#b9c7df",
+              "secondary-fixed": "#d5e3fc",
+              "surface-container-low": "#f2f4f6",
+              "on-tertiary-fixed-variant": "#7a2f18",
+              "primary-fixed": "#dce1ff",
+              "on-error": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-fixed-dim": "#ffb59f",
+              "surface-bright": "#f7f9fb",
+              "secondary": "#515f74",
+              "on-secondary-fixed-variant": "#3a485b",
+              "tertiary-container": "#501100",
+              "primary-fixed-dim": "#b5c4ff",
+              "surface": "#f7f9fb",
+              "on-primary-container": "#768cd8",
+              "on-tertiary-container": "#d47558",
+              "inverse-surface": "#2d3133",
+              "outline": "#757682",
+              "error-container": "#ffdad6",
+              "on-surface": "#191c1e"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+      }
+      .power-gradient {
+        background: linear-gradient(135deg, #012169 0%, #000f3c 100%);
+      }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary-fixed selection:text-primary">
+<!-- TopAppBar -->
+<header class="bg-[#f7f9fb] dark:bg-[#000f3c] docked full-width top-0 z-50 flex justify-between items-center w-full px-8 py-4 max-w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#012169] dark:text-[#f2f4f6] text-3xl" data-icon="account_balance">account_balance</span>
+<h1 class="font-manrope tracking-tighter font-black text-2xl text-[#012169] dark:text-white">Your Ledger</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-manrope font-medium text-sm tracking-wide uppercase text-[#012169] dark:text-white border-b-2 border-[#012169] dark:border-[#f2f4f6] py-1" href="#">Dashboard</a>
+<a class="font-manrope font-medium text-sm tracking-wide uppercase text-[#444651] dark:text-[#eceef0] hover:bg-[#eceef0] dark:hover:bg-[#012169] transition-colors py-1 px-2" href="#">Income &amp; Expenses</a>
+<a class="font-manrope font-medium text-sm tracking-wide uppercase text-[#444651] dark:text-[#eceef0] hover:bg-[#eceef0] dark:hover:bg-[#012169] transition-colors py-1 px-2" href="#">Lenders</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="hidden lg:block text-xs font-bold tracking-widest uppercase text-on-surface-variant hover:text-primary transition-colors">Log In</button>
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-high border border-outline-variant/20">
+<img alt="User profile avatar" data-alt="professional portrait of a confident financial advisor in a light-filled modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTlEMHtJRmgc32wGV6aPsYG7gRjCDRb-gGfnP3d0qY7uC9a4Fi5HFL1TT3hD6L-dk9_RUO2DJg3LgVc4ajU22isononvI0BIqjy8K1l7vx0EvZVgtRGwbvZFEqcIQmvCmkNL5pjdcsPitBR-YQigwz0mwpncYENWKx0t9l_rEGgvvF-8HiTYktD07GwQmFTZcloRZyIg4mRWTHafVpev89SrRl10n4tnoLxvtNCXUi4vuTfPlqBAJcQ2Ca7912OQgtnciY5xSO-JU"/>
+</div>
+</div>
+</header>
+<main>
+<!-- Hero Section: Institutional Power -->
+<section class="relative min-h-[921px] flex flex-col justify-center px-8 lg:px-24 py-20 overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="Architecture" class="w-full h-full object-cover opacity-10 grayscale" data-alt="extreme low angle shot of a modern glass skyscraper reaching into a clear blue sky, emphasizing structural strength and architectural clarity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0o62UfXPfcZ4cXIrTR-DM1DKhL-kCoUb6VBAOoXmmN7l7G3v19Ofk1LvcN4GxXdeMABViDRkYjxDlx1sHBXiSNLU2YI8vZGwIDVy3q5DbAKP1RQEsP-y4tg-31MpNVOah0Xxp6EYDGEA9jDA1lLPbfHUTOFtDG6X2qncER6VyDGHewt-GGsNBF_kTKJx21TlpnENi5T2RtoKUbV9iCSc_NGAT8i56uD1UgKOX3dcBNHH9MZXMEA4u5jZbfqGgCWzqsSMj3AB_lMw"/>
+<div class="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-transparent"></div>
+</div>
+<div class="relative z-10 max-w-4xl space-y-8">
+<div class="inline-block px-4 py-1.5 bg-secondary-container text-on-secondary-fixed-variant text-[10px] font-black tracking-[0.2em] uppercase rounded-full">
+                    Institutional Sovereignty
+                </div>
+<h2 class="font-headline text-6xl lg:text-8xl font-extrabold tracking-tight text-primary leading-[0.95] max-w-3xl">
+                    See where you <span class="text-surface-tint">stand.</span>
+</h2>
+<p class="text-xl text-on-surface-variant max-w-xl font-light leading-relaxed">
+                    The financial world is built on asymmetric information. Your Ledger levels the foundation, providing borrowers with the analytical tools once reserved for elite institutions.
+                </p>
+<div class="flex flex-col sm:flex-row gap-4 pt-4">
+<button class="power-gradient text-on-primary px-10 py-5 font-bold tracking-tight rounded-lg flex items-center justify-center gap-3 hover:scale-[1.02] transition-transform active:scale-95">
+                        Get Started
+                        <span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+<button class="bg-surface-container-lowest border border-outline-variant/30 text-primary px-10 py-5 font-bold tracking-tight rounded-lg hover:bg-surface-container-low transition-colors">
+                        Compare Lenders
+                    </button>
+</div>
+</div>
+<!-- Floating Metrics Bar (Data Ribbon) -->
+<div class="absolute bottom-0 left-0 w-full bg-primary py-6 px-12 hidden lg:flex justify-between items-center text-on-primary border-t border-white/10">
+<div class="flex flex-col">
+<span class="text-[10px] font-black tracking-widest uppercase opacity-60">Global Index</span>
+<span class="text-xl font-bold font-manrope">4.28% APY</span>
+</div>
+<div class="h-8 w-px bg-white/20"></div>
+<div class="flex flex-col">
+<span class="text-[10px] font-black tracking-widest uppercase opacity-60">Market Liquidity</span>
+<span class="text-xl font-bold font-manrope">High Stability</span>
+</div>
+<div class="h-8 w-px bg-white/20"></div>
+<div class="flex flex-col">
+<span class="text-[10px] font-black tracking-widest uppercase opacity-60">Verified Assets</span>
+<span class="text-xl font-bold font-manrope">$12.4B AUD</span>
+</div>
+<div class="flex gap-2 items-center text-primary-fixed">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="text-xs font-bold uppercase tracking-wider">Institutional Trust Certified</span>
+</div>
+</div>
+</section>
+<!-- Bento Grid: Real-time Analysis & Scenarios -->
+<section class="px-8 lg:px-24 py-32 bg-surface-container-low">
+<div class="mb-16 space-y-4">
+<h3 class="font-headline text-4xl font-extrabold tracking-tight text-primary">Uncompromising Clarity</h3>
+<div class="h-1 w-24 bg-surface-tint"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Large Analytics Card -->
+<div class="md:col-span-8 bg-surface-container-lowest p-10 rounded-xl space-y-8 group hover:bg-white transition-colors">
+<div class="flex justify-between items-start">
+<div class="space-y-2">
+<span class="text-[10px] font-black tracking-[0.2em] uppercase text-surface-tint">Institutional Tooling</span>
+<h4 class="text-3xl font-bold text-primary">Real-time Analysis</h4>
+</div>
+<span class="material-symbols-outlined text-4xl text-primary/20 group-hover:text-primary transition-colors" data-icon="analytics">analytics</span>
+</div>
+<div class="aspect-[16/7] bg-surface-container-low rounded-lg overflow-hidden relative border border-outline-variant/10">
+<img alt="Analytics Dashboard" class="w-full h-full object-cover" data-alt="clean minimal digital dashboard showing high-level financial line graphs and data points in deep navy and light blue tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5yT8UWLRsQmBuL5lDKSbD9dxQrlLd04rQ12HQqlZAl4etHjnx9-WXnQlufS87Pw143x3ZetUwn6wNsZ7-zyOuVJGMbGp5o4DU1MyLH4_9b5phWdiBT7LeBilxdMUeMQqiRB8Zmm5MSgqIoylpATF1OgPMyIu-jINCoPR7S4XM4QGSran2BwUURReXBPStfwuvEYwkIJQLXNuXJA21FckgEKqb4opONgFki_U3NApR--vRvnLe6v88MccPbdbOCEYT0Q5liZ0UEoM"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"></div>
+</div>
+<p class="text-on-surface-variant leading-relaxed">Connect your accounts for a live, architectural view of your net position. We use bank-grade encryption to map your assets against current market liabilities.</p>
+</div>
+<!-- Scenario Card -->
+<div class="md:col-span-4 bg-primary text-on-primary p-10 rounded-xl space-y-6 flex flex-col justify-between">
+<div class="space-y-4">
+<span class="material-symbols-outlined text-4xl" data-icon="query_stats">query_stats</span>
+<h4 class="text-3xl font-bold tracking-tight">Scenario Comparison</h4>
+<p class="text-primary-fixed/70 text-sm leading-relaxed">Simulate market shifts, interest rate hikes, or debt restructuring before you ever talk to a lender.</p>
+</div>
+<ul class="space-y-4 pt-6 border-t border-white/10">
+<li class="flex items-center gap-3 text-xs font-bold tracking-wide uppercase">
+<span class="material-symbols-outlined text-surface-tint text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                            Variable vs Fixed Stress Tests
+                        </li>
+<li class="flex items-center gap-3 text-xs font-bold tracking-wide uppercase">
+<span class="material-symbols-outlined text-surface-tint text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                            Refinance Opportunity Alerts
+                        </li>
+</ul>
+</div>
+<!-- Trust Signals Row -->
+<div class="md:col-span-4 bg-surface-container-high p-8 rounded-xl flex items-center gap-6">
+<span class="material-symbols-outlined text-5xl text-primary" data-icon="handshake">handshake</span>
+<div>
+<h5 class="font-bold text-primary">Lender Network</h5>
+<p class="text-xs text-on-surface-variant">Direct access to 40+ Tier 1 institutional lenders.</p>
+</div>
+</div>
+<div class="md:col-span-4 bg-surface-container-high p-8 rounded-xl flex items-center gap-6">
+<span class="material-symbols-outlined text-5xl text-primary" data-icon="security">security</span>
+<div>
+<h5 class="font-bold text-primary">Bank-Grade Security</h5>
+<p class="text-xs text-on-surface-variant">256-bit AES encryption and SOC2 Type II compliance.</p>
+</div>
+</div>
+<div class="md:col-span-4 bg-surface-container-high p-8 rounded-xl flex items-center gap-6">
+<span class="material-symbols-outlined text-5xl text-primary" data-icon="award_star">award_star</span>
+<div>
+<h5 class="font-bold text-primary">Zero Hidden Fees</h5>
+<p class="text-xs text-on-surface-variant">Transparent pricing. No commissions from lenders.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Institutional Trust Section -->
+<section class="py-32 bg-surface">
+<div class="max-w-7xl mx-auto px-8 grid lg:grid-cols-2 gap-24 items-center">
+<div class="relative">
+<div class="absolute -top-12 -left-12 w-64 h-64 bg-secondary-container/20 rounded-full blur-3xl"></div>
+<img alt="Institutional Building" class="relative z-10 w-full h-[600px] object-cover rounded-sm grayscale group-hover:grayscale-0 transition-all duration-700" data-alt="high-contrast photograph of a grand, classical stone bank building facade with heavy columns and a sense of enduring history and trust" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfChmJ5LMj8bGYQ1hb_zGj3L5Hk7DVEsoWWAHa8lwzbWoD4ikR6v4VYr6Vk8H8SjJM38MlNz0VgW7nL7yQufwFXcca7_jTV1V3WHRcptgOHe_Fx4C_cVp42rTtUQrGyELQIE6isI0vCBz8VfW6K5b284gENb5dc7qe8wTgux9RXoEuh5bTsfib9Z2cC_JtZLTpJozFFU7b-na1TyOj2W64vgYj75UzBzYkHbgfyt8aeE830hjSoR0NKpSaYAevXHNJYYUoypCSt1o"/>
+<div class="absolute bottom-8 right-8 z-20 glass-effect p-8 max-w-xs space-y-2 border border-white/40">
+<p class="text-4xl font-black text-primary font-headline">99.8%</p>
+<p class="text-xs font-black tracking-widest uppercase text-surface-tint">Data Accuracy Guarantee</p>
+</div>
+</div>
+<div class="space-y-10">
+<div class="space-y-4">
+<span class="text-[10px] font-black tracking-[0.3em] uppercase text-surface-tint">The Institutional Advantage</span>
+<h3 class="font-headline text-5xl font-extrabold tracking-tight text-primary leading-tight">Borrow with the authority of an institution.</h3>
+</div>
+<p class="text-lg text-on-surface-variant leading-relaxed">
+                        Lenders rely on complex risk-weighting models. Your Ledger exposes these models, giving you the power to optimize your balance sheet before you ever enter a negotiation. This isn't just accounting; it's financial strategy.
+                    </p>
+<div class="grid grid-cols-2 gap-8 pt-6">
+<div class="space-y-2">
+<h6 class="text-sm font-black uppercase tracking-widest text-primary">ASIC Licensed</h6>
+<p class="text-xs text-on-surface-variant">Strict regulatory adherence across all operations.</p>
+</div>
+<div class="space-y-2">
+<h6 class="text-sm font-black uppercase tracking-widest text-primary">Neutral Stand</h6>
+<p class="text-xs text-on-surface-variant">We never accept 'spot' fees or referral commissions.</p>
+</div>
+</div>
+<div class="pt-8">
+<a class="inline-flex items-center gap-4 group" href="#">
+<span class="font-bold tracking-tight text-primary border-b-2 border-primary group-hover:pb-1 transition-all">Learn about our methodologies</span>
+<span class="material-symbols-outlined text-primary group-hover:translate-x-2 transition-transform">trending_flat</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA: The Power Shift -->
+<section class="px-8 lg:px-24 py-24">
+<div class="power-gradient rounded-2xl p-16 lg:p-24 text-center space-y-8 relative overflow-hidden">
+<div class="absolute inset-0 opacity-10">
+<div class="grid grid-cols-12 h-full w-full">
+<div class="border-r border-white/20"></div><div class="border-r border-white/20"></div><div class="border-r border-white/20"></div><div class="border-r border-white/20"></div><div class="border-r border-white/20"></div><div class="border-r border-white/20"></div><div class="border-r border-white/20"></div><div class="border-r border-white/20"></div><div class="border-r border-white/20"></div><div class="border-r border-white/20"></div><div class="border-r border-white/20"></div><div class="border-r border-white/20"></div>
+</div>
+</div>
+<div class="relative z-10 max-w-2xl mx-auto space-y-6">
+<h3 class="font-headline text-4xl lg:text-6xl font-extrabold text-on-primary tracking-tight">Ready to command your capital?</h3>
+<p class="text-primary-fixed/80 text-lg">Join 15,000+ borrowers who have reclaimed their financial narrative.</p>
+<div class="pt-6">
+<button class="bg-surface-container-lowest text-primary px-12 py-5 font-black uppercase tracking-[0.1em] text-sm rounded-sm hover:bg-white hover:shadow-2xl transition-all">Start Your Free Audit</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#000f3c] dark:bg-[#000820] w-full py-20 border-t border-[#012169] flex flex-col items-center">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center px-12 w-full max-w-7xl mb-16 gap-12">
+<div class="space-y-4 max-w-xs">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-white text-3xl" data-icon="account_balance">account_balance</span>
+<h1 class="text-white font-bold tracking-tight text-2xl">Your Ledger</h1>
+</div>
+<p class="font-manrope text-xs tracking-widest uppercase text-white/50 leading-loose">
+                    The institutional-grade platform for the sovereign borrower.
+                </p>
+</div>
+<nav class="grid grid-cols-2 md:grid-cols-3 gap-12">
+<div class="space-y-6">
+<h6 class="font-manrope text-xs font-black tracking-widest uppercase text-white">Platform</h6>
+<ul class="space-y-4">
+<li><a class="font-manrope text-xs tracking-widest uppercase text-slate-400 hover:text-white transition-opacity" href="#">Analysis</a></li>
+<li><a class="font-manrope text-xs tracking-widest uppercase text-slate-400 hover:text-white transition-opacity" href="#">Scenarios</a></li>
+<li><a class="font-manrope text-xs tracking-widest uppercase text-slate-400 hover:text-white transition-opacity" href="#">Lenders</a></li>
+</ul>
+</div>
+<div class="space-y-6">
+<h6 class="font-manrope text-xs font-black tracking-widest uppercase text-white">Legal</h6>
+<ul class="space-y-4">
+<li><a class="font-manrope text-xs tracking-widest uppercase text-slate-400 hover:text-white transition-opacity" href="#">Privacy Policy</a></li>
+<li><a class="font-manrope text-xs tracking-widest uppercase text-slate-400 hover:text-white transition-opacity" href="#">Terms of Service</a></li>
+</ul>
+</div>
+<div class="space-y-6">
+<h6 class="font-manrope text-xs font-black tracking-widest uppercase text-white">Support</h6>
+<ul class="space-y-4">
+<li><a class="font-manrope text-xs tracking-widest uppercase text-slate-400 hover:text-white transition-opacity" href="#">Contact Support</a></li>
+<li><a class="font-manrope text-xs tracking-widest uppercase text-slate-400 hover:text-white transition-opacity" href="#">Help Center</a></li>
+</ul>
+</div>
+</nav>
+</div>
+<div class="w-full px-12 max-w-7xl pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+<p class="font-manrope text-xs tracking-widest uppercase text-white opacity-70">
+                © 2024 Your Ledger. See where you stand.
+            </p>
+<div class="flex gap-6">
+<span class="material-symbols-outlined text-white/30 hover:text-white transition-colors cursor-pointer" data-icon="share">share</span>
+<span class="material-symbols-outlined text-white/30 hover:text-white transition-colors cursor-pointer" data-icon="mail">mail</span>
+</div>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container": "#eceef0",
+              "on-primary": "#ffffff",
+              "surface-tint": "#445aa3",
+              "surface-container-high": "#e6e8ea",
+              "on-primary-fixed-variant": "#2b4289",
+              "inverse-on-surface": "#eff1f3",
+              "on-secondary": "#ffffff",
+              "background": "#f7f9fb",
+              "tertiary-fixed": "#ffdbd1",
+              "primary-container": "#012169",
+              "outline-variant": "#c5c5d2",
+              "primary": "#000f3c",
+              "on-secondary-container": "#57657a",
+              "surface-dim": "#d8dadc",
+              "on-surface-variant": "#444651",
+              "inverse-primary": "#b5c4ff",
+              "on-primary-fixed": "#00164e",
+              "tertiary": "#2c0600",
+              "surface-variant": "#e0e3e5",
+              "on-error-container": "#93000a",
+              "on-tertiary": "#ffffff",
+              "error": "#ba1a1a",
+              "on-tertiary-fixed": "#3a0a00",
+              "on-secondary-fixed": "#0d1c2e",
+              "on-background": "#191c1e",
+              "secondary-container": "#d5e3fc",
+              "surface-container-highest": "#e0e3e5",
+              "secondary-fixed-dim": "#b9c7df",
+              "secondary-fixed": "#d5e3fc",
+              "surface-container-low": "#f2f4f6",
+              "on-tertiary-fixed-variant": "#7a2f18",
+              "primary-fixed": "#dce1ff",
+              "on-error": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-fixed-dim": "#ffb59f",
+              "surface-bright": "#f7f9fb",
+              "secondary": "#515f74",
+              "on-secondary-fixed-variant": "#3a485b",
+              "tertiary-container": "#501100",
+              "primary-fixed-dim": "#b5c4ff",
+              "surface": "#f7f9fb",
+              "on-primary-container": "#768cd8",
+              "on-tertiary-container": "#d47558",
+              "inverse-surface": "#2d3133",
+              "outline": "#757682",
+              "error-container": "#ffdad6",
+              "on-surface": "#191c1e"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .monolithic-gradient {
+            background: linear-gradient(135deg, #012169 0%, #000f3c 100%);
+        }
+        .glass-overlay {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body">
+<!-- TopAppBar -->
+<header class="bg-[#f7f9fb] dark:bg-[#000f3c] docked full-width top-0 z-50 flex justify-between items-center w-full px-8 py-4 max-w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#012169] dark:text-[#f2f4f6] text-2xl" data-icon="account_balance">account_balance</span>
+<h1 class="font-manrope tracking-tight font-bold text-2xl text-[#012169] dark:text-[#f2f4f6]">Your Ledger</h1>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="User profile avatar" data-alt="Close up professional portrait of a business executive in a dark navy suit against a clean architectural glass background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1fyeUUTAnw_9IrS_VMSRrmc-H7tJb0IJPzxl5eya2eypOwLDvfu90JsLA5cy5UVm0gq145KDsXDAZhkU13o_zSCZnp2VVX4NJP7lBeKLFGk9-DV5CKBavBhzKw6-VEqjRwNXW1nzbJBpIyDTrsg4FnnKyCVlqk5kr_6owQPMIBdxhMUNJKhRF0vDD2VkNy49A-eHJ5ecX2iy3LN6eaQMBeUCl2m9OKVtYGPyWnisPnHDjmMnDdLnxR4OQz8YEhhj1Je2t93aD-7U"/>
+</div>
+</header>
+<main class="min-h-screen pt-4 pb-24">
+<!-- Hero Section: Editorial Financialism -->
+<section class="px-8 pt-12 pb-20 bg-surface-container-low">
+<div class="max-w-md mx-auto">
+<p class="font-label text-xs tracking-widest uppercase text-on-surface-variant mb-4">ESTABLISHED 2024</p>
+<h2 class="font-manrope text-5xl font-extrabold tracking-tighter text-primary leading-none mb-6">
+                    See where <br/>you stand.
+                </h2>
+<div class="w-16 h-1 bg-primary-container mb-8"></div>
+<p class="text-on-surface-variant text-lg leading-relaxed">
+                    Your Ledger is the institutional architect of your financial future. We provide the structural foundations and elite clarity required to navigate the complexities of modern wealth.
+                </p>
+</div>
+</section>
+<!-- Bento Grid: The Institutional Core -->
+<section class="px-6 -mt-10">
+<div class="grid grid-cols-1 gap-4 max-w-md mx-auto">
+<!-- Large Feature Card -->
+<div class="bg-surface-container-lowest p-8 rounded-none border-l-4 border-primary-container shadow-sm">
+<span class="material-symbols-outlined text-primary-container mb-4 text-3xl" data-icon="analytics">analytics</span>
+<h3 class="font-manrope text-xl font-bold text-primary mb-2">Architectural Precision</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">
+                        Moving beyond simple tracking into algorithmic forecasting. Our ledger doesn't just record history; it projects your potential.
+                    </p>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<!-- Square Card 1 -->
+<div class="bg-primary-container p-6 rounded-none text-on-primary">
+<span class="material-symbols-outlined mb-4" data-icon="shield">shield</span>
+<h4 class="font-bold text-sm uppercase tracking-wider mb-2">Security</h4>
+<p class="text-xs opacity-80">Institutional grade encryption protecting every asset entry.</p>
+</div>
+<!-- Square Card 2 -->
+<div class="bg-surface-container-highest p-6 rounded-none">
+<span class="material-symbols-outlined text-primary mb-4" data-icon="account_balance_wallet">account_balance_wallet</span>
+<h4 class="font-bold text-sm uppercase tracking-wider mb-2 text-primary">Liquidity</h4>
+<p class="text-xs text-on-surface-variant">Real-time visibility into your cash flow and debt obligations.</p>
+</div>
+</div>
+<!-- Vision Card -->
+<div class="relative h-64 overflow-hidden rounded-none group">
+<img alt="Modern Architecture" class="absolute inset-0 w-full h-full object-cover grayscale transition-transform duration-700 group-hover:scale-105" data-alt="Low angle shot of a modern glass skyscraper reflecting a clear blue sky, emphasizing structural strength and transparency" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWXsbSBUEyyCRC27t-3qHn8QzNFyWcLZz6oiqwWdehDqxyPffvddo6tjspuop93jVQgN3bpwMRCszKvbPnV0C64rIlGlp1xLB3kRV0nnw5k4X1G3b4bFbog2ZWiIjaGuziqEBkqnSIsZ0N4SnymbccL-fHscPsCB8Y8Mh5APYur8cbEr8A-S1tnKp8yfwfR9V-guZSi1OrIqkm7Kn5dXCBSsANCuYVC27q0_VV1sf--tYn4fPyFsfN6Tqtzx_vhY_OZ-Ve2oBF52s"/>
+<div class="absolute inset-0 monolithic-gradient opacity-60"></div>
+<div class="absolute inset-0 p-8 flex flex-col justify-end">
+<h3 class="text-white font-manrope text-2xl font-bold leading-tight">Built for the <br/>Digital Sovereign.</h3>
+</div>
+</div>
+</div>
+</section>
+<!-- Mission Statement -->
+<section class="px-8 py-20 max-w-md mx-auto">
+<div class="space-y-12">
+<div class="border-t border-outline-variant/30 pt-8">
+<span class="text-primary-container font-black text-4xl opacity-10">01</span>
+<h4 class="font-bold text-lg mt-2 mb-3">Eliminate Financial Fog</h4>
+<p class="text-on-surface-variant text-sm">Most platforms clutter the view. We use expansive white space and intentional hierarchy to reveal the signals in the noise.</p>
+</div>
+<div class="border-t border-outline-variant/30 pt-8">
+<span class="text-primary-container font-black text-4xl opacity-10">02</span>
+<h4 class="font-bold text-lg mt-2 mb-3">Structural Integrity</h4>
+<p class="text-on-surface-variant text-sm">Our data models are built on banking-standard frameworks, ensuring your ledger remains the source of truth for years to come.</p>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="px-8 py-12">
+<div class="max-w-md mx-auto monolithic-gradient p-10 text-center">
+<h3 class="text-white font-manrope text-2xl font-bold mb-4">Start Your Build.</h3>
+<p class="text-on-primary-container mb-8 text-sm">Join thousands of individuals who have clarified their financial position with Your Ledger.</p>
+<button class="w-full py-4 bg-white text-primary font-bold tracking-widest uppercase text-xs hover:bg-surface-container-low transition-colors">
+                    Explore Dashboard
+                </button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#000f3c] dark:bg-[#000820] w-full py-12 border-t border-[#012169] flex flex-col md:flex-row justify-between items-center px-12 w-full">
+<div class="mb-8 md:mb-0 text-center md:text-left">
+<h2 class="text-white font-bold tracking-tight text-xl mb-2">Your Ledger</h2>
+<p class="font-manrope text-xs tracking-widest uppercase opacity-70 text-white">© 2024 Your Ledger. See where you stand.</p>
+</div>
+<div class="flex flex-col md:flex-row gap-6 text-center">
+<a class="text-slate-400 hover:text-white font-manrope text-xs tracking-widest uppercase transition-opacity" href="#">Privacy Policy</a>
+<a class="text-slate-400 hover:text-white font-manrope text-xs tracking-widest uppercase transition-opacity" href="#">Terms of Service</a>
+<a class="text-slate-400 hover:text-white font-manrope text-xs tracking-widest uppercase transition-opacity" href="#">Contact Support</a>
+</div>
+</footer>
+<!-- Bottom Navigation (Mobile Only Shell) -->
+<nav class="fixed bottom-0 left-0 right-0 glass-overlay border-t border-outline-variant/10 md:hidden z-50">
+<div class="flex justify-around items-center py-3">
+<button class="flex flex-col items-center gap-1 text-[#444651]">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Dash</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-[#444651]">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Income</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-[#444651]">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Results</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-[#012169]">
+<span class="material-symbols-outlined" data-icon="info" data-weight="fill">info</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">About</span>
+<div class="w-1 h-1 rounded-full bg-[#012169]"></div>
+</button>
+</div>
+</nav>
+</body></html>
