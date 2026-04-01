@@ -21,6 +21,10 @@ const expenseFields: Array<{ key: keyof ExpenseBreakdown; label: string }> = [
 const assetCategoryOptions: Asset["category"][] = ["cash", "property", "super", "vehicle", "other"];
 const liabilityCategoryOptions: Liability["category"][] = ["home-loan", "credit-card", "personal-loan", "car-loan", "other"];
 
+function getDefaultReadingDate() {
+  return new Date().toISOString().slice(0, 10);
+}
+
 function createId(prefix: string) {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
     return `${prefix}-${crypto.randomUUID()}`;
@@ -45,6 +49,9 @@ function createAsset(order: number): Asset {
     id: createId("asset"),
     label: order === 1 ? "Cash savings" : `Asset ${order}`,
     value: 0,
+    readingDate: getDefaultReadingDate(),
+    expectedMonthlyContribution: 0,
+    annualGrowthRate: order === 1 ? 4.5 : 5,
     category: "cash",
   };
 }
@@ -527,6 +534,9 @@ export function AssetsLiabilitiesEditor() {
             {profile.assets.map((asset) => {
               const labelError = asset.label.trim() ? undefined : "Asset label is required.";
               const valueError = asset.value < 0 ? "Asset value must be zero or more." : undefined;
+              const readingDateError = asset.readingDate.trim() ? undefined : "Reading date is required.";
+              const contributionError = (asset.expectedMonthlyContribution ?? 0) < 0 ? "Monthly contribution must be zero or more." : undefined;
+              const growthRateError = (asset.annualGrowthRate ?? 0) < 0 ? "Annual growth rate must be zero or more." : undefined;
 
               return (
                 <article key={asset.id} className="rounded-[1.5rem] bg-surface-low p-5">
@@ -604,7 +614,69 @@ export function AssetsLiabilitiesEditor() {
                         className={textFieldClassName(Boolean(valueError))}
                       />
                     </Field>
+
+                    <Field label="Reading date" error={readingDateError}>
+                      <input
+                        type="date"
+                        value={asset.readingDate}
+                        onChange={(event) =>
+                          commitProfile((currentProfile) => ({
+                            ...currentProfile,
+                            assets: currentProfile.assets.map((candidate) =>
+                              candidate.id === asset.id
+                                ? { ...candidate, readingDate: event.target.value }
+                                : candidate,
+                            ),
+                          }))
+                        }
+                        className={textFieldClassName(Boolean(readingDateError))}
+                      />
+                    </Field>
+
+                    <Field label="Expected monthly input" error={contributionError}>
+                      <input
+                        type="number"
+                        min="0"
+                        step="10"
+                        value={asset.expectedMonthlyContribution ?? 0}
+                        onChange={(event) =>
+                          commitProfile((currentProfile) => ({
+                            ...currentProfile,
+                            assets: currentProfile.assets.map((candidate) =>
+                              candidate.id === asset.id
+                                ? { ...candidate, expectedMonthlyContribution: parseNumberInput(event.target.value) }
+                                : candidate,
+                            ),
+                          }))
+                        }
+                        className={textFieldClassName(Boolean(contributionError))}
+                      />
+                    </Field>
+
+                    <Field label="Annual growth rate" error={growthRateError}>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        value={asset.annualGrowthRate ?? 0}
+                        onChange={(event) =>
+                          commitProfile((currentProfile) => ({
+                            ...currentProfile,
+                            assets: currentProfile.assets.map((candidate) =>
+                              candidate.id === asset.id
+                                ? { ...candidate, annualGrowthRate: parseNumberInput(event.target.value) }
+                                : candidate,
+                            ),
+                          }))
+                        }
+                        className={textFieldClassName(Boolean(growthRateError))}
+                      />
+                    </Field>
                   </div>
+
+                  <p className="mt-4 text-xs leading-6 text-muted">
+                    Use the reading date to anchor balances like savings and super before projected inputs are layered on from ongoing contributions and post-expense surplus.
+                  </p>
                 </article>
               );
             })}

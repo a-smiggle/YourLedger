@@ -26,6 +26,9 @@ export type Asset = {
   id: string;
   label: string;
   value: number;
+  readingDate: string;
+  expectedMonthlyContribution?: number;
+  annualGrowthRate?: number;
   category: "cash" | "property" | "super" | "vehicle" | "other";
 };
 
@@ -57,7 +60,43 @@ export type BorrowingPowerResult = {
   assessedRepaymentRate: number;
 };
 
+export type ProjectionAssumptions = {
+  superGuaranteeRate: number;
+  medicareLevyRate: number;
+  savingsAllocationRate: number;
+};
+
+export type AssetProjection = {
+  assetId: string;
+  label: string;
+  category: Asset["category"];
+  readingDate: string;
+  currentValue: number;
+  projectedMonthlyContribution: number;
+  annualGrowthRate: number;
+  projected12MonthValue: number;
+  suggestedContributionLabel: string;
+};
+
+export type AssetProjectionPoint = {
+  monthLabel: string;
+  totalProjectedAssets: number;
+  totalProjectedCash: number;
+  totalProjectedSuper: number;
+};
+
+export type AssetProjectionSummary = {
+  assumptions: ProjectionAssumptions;
+  afterTaxMonthlyIncome: number;
+  monthlyDeclaredExpenses: number;
+  monthlyLiabilities: number;
+  monthlySurplusAfterExpenses: number;
+  assetProjections: AssetProjection[];
+  timeline: AssetProjectionPoint[];
+};
+
 export type ScenarioSummary = {
+  id?: string;
   label: string;
   borrowingPower: number;
   monthlyRepayment: number;

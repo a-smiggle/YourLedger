@@ -7,8 +7,8 @@ const routes = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/income-expenses", label: "Income & Expenses" },
   { href: "/assets-liabilities", label: "Assets & Liabilities" },
-  { href: "/results", label: "Results" },
   { href: "/scenarios", label: "Scenarios" },
+  { href: "/results", label: "Results" },
   { href: "/lenders", label: "Lenders" },
 ];
 

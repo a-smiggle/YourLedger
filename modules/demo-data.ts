@@ -2,6 +2,7 @@ import { lendingAssumptions } from "@/config/lending-assumptions";
 import type { BankData, HouseholdProfile, ScenarioSummary, UserData, UserScenario } from "@/types/domain";
 
 const seededAt = "2026-03-30T00:00:00.000Z";
+const seededReadingDate = seededAt.slice(0, 10);
 
 export const demoProfile: HouseholdProfile = {
   members: [
@@ -38,9 +39,33 @@ export const demoProfile: HouseholdProfile = {
     other: 340,
   },
   assets: [
-    { id: "asset-1", label: "Offset cash", value: 84000, category: "cash" },
-    { id: "asset-2", label: "Owner occupied property", value: 745000, category: "property" },
-    { id: "asset-3", label: "Superannuation", value: 166000, category: "super" },
+    {
+      id: "asset-1",
+      label: "Offset cash",
+      value: 84000,
+      readingDate: seededReadingDate,
+      expectedMonthlyContribution: 0,
+      annualGrowthRate: 4.5,
+      category: "cash",
+    },
+    {
+      id: "asset-2",
+      label: "Owner occupied property",
+      value: 745000,
+      readingDate: seededReadingDate,
+      expectedMonthlyContribution: 0,
+      annualGrowthRate: 3,
+      category: "property",
+    },
+    {
+      id: "asset-3",
+      label: "Superannuation",
+      value: 166000,
+      readingDate: seededReadingDate,
+      expectedMonthlyContribution: 0,
+      annualGrowthRate: 7,
+      category: "super",
+    },
   ],
   liabilities: [
     { id: "liability-1", label: "Home loan", balance: 392000, monthlyRepayment: 2540, category: "home-loan" },

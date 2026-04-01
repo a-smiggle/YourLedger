@@ -70,6 +70,7 @@ export function buildScenarioSummaries(userData: UserData, bankData: BankData): 
 
     return [
       {
+        id: scenario.id,
         label: scenario.label,
         borrowingPower: borrowingResult.estimatedBorrowingPower,
         monthlyRepayment,

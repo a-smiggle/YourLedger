@@ -8,21 +8,21 @@
 
 ## Household Data Entry
 
-- [ ] Build editable household member forms for income, bonus, rental income, and HECS/HELP settings.
-- [ ] Support add, edit, reorder, and remove flows for household members.
-- [ ] Build expense entry forms for all monthly expense categories used by the engine.
-- [ ] Build assets entry forms with support for cash, property, super, vehicle, and other categories.
-- [ ] Build liabilities entry forms with support for home loans, credit cards, personal loans, car loans, and other debts.
-- [ ] Add client-side validation for all monetary, percentage, and count inputs.
-- [ ] Add clear empty states and sensible defaults when a user has no members, assets, liabilities, or scenarios.
+- [x] Build editable household member forms for income, bonus, rental income, and HECS/HELP settings.
+- [x] Support add, edit, reorder, and remove flows for household members.
+- [x] Build expense entry forms for all monthly expense categories used by the engine.
+- [x] Build assets entry forms with support for cash, property, super, vehicle, and other categories.
+- [x] Build liabilities entry forms with support for home loans, credit cards, personal loans, car loans, and other debts.
+- [x] Add client-side validation for all monetary, percentage, and count inputs.
+- [x] Add clear empty states and sensible defaults when a user has no members, assets, liabilities, or scenarios.
 
 ## Scenario Management
 
-- [ ] Build scenario create, edit, duplicate, and delete flows backed by `UserData.scenarios`.
-- [ ] Allow each scenario to choose a lender and product from resolved bank data.
-- [ ] Allow per-scenario overrides for interest rate, assessment buffer, loan term, and notes.
-- [ ] Keep `selectedScenarioId` in sync with scenario CRUD operations.
-- [ ] Show scenario comparison outputs in both chart and tabular form.
+- [x] Build scenario create, edit, duplicate, and delete flows backed by `UserData.scenarios`.
+- [x] Allow each scenario to choose a lender and product from resolved bank data.
+- [x] Allow per-scenario overrides for interest rate, assessment buffer, loan term, and notes.
+- [x] Keep `selectedScenarioId` in sync with scenario CRUD operations.
+- [x] Show scenario comparison outputs in both chart and tabular form.
 
 ## Lender And Product Data
 
@@ -37,7 +37,7 @@
 - [ ] Expand serviceability logic so expenses, liabilities, rental shading, bonus shading, and HECS/HELP loadings are all traceable in outputs.
 - [ ] Add a dedicated repayment calculator flow beyond the borrowing power calculation.
 - [ ] Add offset-vs-no-offset calculation support where product features allow it.
-- [ ] Add cashflow projection logic over time.
+- [x] Add cashflow projection logic over time.
 - [ ] Add debt and LVR trajectory calculations.
 - [ ] Add interest rate sensitivity calculations for scenario stress testing.
 - [ ] Move any remaining hard-coded lending assumptions into config-driven values.
@@ -45,11 +45,11 @@
 
 ## Results And Charts
 
-- [ ] Expand the results page to show borrowing power, repayments, monthly surplus, assessed rate, assets, liabilities, and net position clearly.
-- [ ] Add cashflow over time charts.
+- [x] Expand the results page to show borrowing power, repayments, monthly surplus, assessed rate, assets, liabilities, and net position clearly.
+- [x] Add cashflow over time charts.
 - [ ] Add debt and LVR trajectory charts.
 - [ ] Add interest rate sensitivity charts.
-- [ ] Ensure every chart updates in real time from persisted state.
+- [x] Ensure every chart updates in real time from persisted state.
 - [ ] Ensure chart layouts and labels are readable on mobile screens.
 
 ## Data Management

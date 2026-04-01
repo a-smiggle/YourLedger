@@ -20,7 +20,13 @@ type AppDataContextValue = {
 
 const AppDataContext = createContext<AppDataContextValue | null>(null);
 
+function fallbackReadingDate(updatedAt?: string) {
+  return (updatedAt ?? demoUserData.meta.updatedAt).slice(0, 10);
+}
+
 function normalizeUserData(userData: UserData): UserData {
+  const assetReadingDate = fallbackReadingDate(userData.meta.updatedAt);
+
   return {
     ...userData,
     profile: {
@@ -30,6 +36,13 @@ function normalizeUserData(userData: UserData): UserData {
         ...demoUserData.profile.monthlyExpenses,
         ...userData.profile.monthlyExpenses,
       },
+      assets: userData.profile.assets.map((asset, index) => ({
+        ...demoUserData.profile.assets[index],
+        ...asset,
+        readingDate: asset.readingDate ?? assetReadingDate,
+        expectedMonthlyContribution: asset.expectedMonthlyContribution ?? demoUserData.profile.assets[index]?.expectedMonthlyContribution,
+        annualGrowthRate: asset.annualGrowthRate ?? demoUserData.profile.assets[index]?.annualGrowthRate,
+      })),
     },
   };
 }
