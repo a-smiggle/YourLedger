@@ -20,9 +20,24 @@ type AppDataContextValue = {
 
 const AppDataContext = createContext<AppDataContextValue | null>(null);
 
+function normalizeUserData(userData: UserData): UserData {
+  return {
+    ...userData,
+    profile: {
+      ...demoUserData.profile,
+      ...userData.profile,
+      monthlyExpenses: {
+        ...demoUserData.profile.monthlyExpenses,
+        ...userData.profile.monthlyExpenses,
+      },
+    },
+  };
+}
+
 export function AppDataProvider({ children }: Readonly<{ children: React.ReactNode }>) {
-  const [userData, setUserData, isUserDataLoaded] = useLocalStorage<UserData>(USER_DATA_STORAGE_KEY, demoUserData);
+  const [storedUserData, setUserData, isUserDataLoaded] = useLocalStorage<UserData>(USER_DATA_STORAGE_KEY, demoUserData);
   const [bankData, setBankData, isBankDataLoaded] = useLocalStorage<BankData>(BANK_DATA_STORAGE_KEY, demoBankData);
+  const userData = normalizeUserData(storedUserData);
 
   return (
     <AppDataContext.Provider

@@ -11,7 +11,13 @@ export type ExpenseBreakdown = {
   housing: number;
   transport: number;
   groceries: number;
+  phone: number;
+  internet: number;
   utilities: number;
+  insurance: number;
+  healthcare: number;
+  childcareEducation: number;
+  subscriptions: number;
   discretionary: number;
   other: number;
 };

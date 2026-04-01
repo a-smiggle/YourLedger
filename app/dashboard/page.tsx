@@ -20,10 +20,10 @@ export default function DashboardPage() {
       <div className="space-y-8">
         <section className="rounded-[2rem] bg-primary px-8 py-10 text-white shadow-ambient sm:px-10">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-100">Dashboard</p>
-          <h1 className="mt-4 max-w-3xl text-4xl font-extrabold tracking-tight sm:text-5xl">
+          <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-5xl">
             Borrowing power, cashflow, and loan planning in one local-first workspace.
           </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-blue-50 sm:text-base">
+          <p className="mt-4 text-sm leading-7 text-blue-50 sm:text-base">
             Review indicative household borrowing outcomes, compare scenarios, and keep planning information within the browser.
           </p>
         </section>

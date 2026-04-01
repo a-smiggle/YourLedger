@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { DashboardInfoActions } from "@/components/dashboard-info-actions";
@@ -62,19 +64,29 @@ export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) 
 
         <aside
           className={[
-            "fixed inset-y-0 left-0 z-40 w-72 border-r border-outline bg-surface-low px-6 py-8 transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:shrink-0",
+            "fixed inset-y-0 left-0 z-40 w-72 border-r border-outline bg-surface-low px-6 pb-8 pt-4 transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:shrink-0",
             isMenuOpen ? "translate-x-0" : "-translate-x-full lg:hidden",
           ].join(" ")}
         >
           <div className="flex h-full flex-col">
             <div className="mb-10 flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.22em] text-muted">Your Ledger</p>
-                <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-primary">See where you stand.</h2>
-                <p className="mt-3 text-sm leading-6 text-muted">
-                  Local-first borrowing power, cashflow, and home loan planning.
-                </p>
-              </div>
+              <Link href="/dashboard" className="min-w-0 flex-1">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-4">
+                    <Image
+                      src="/YourLedgerIcon.png"
+                      alt="Your Ledger icon"
+                      width={64}
+                      height={64}
+                      className="h-14 w-14 rounded-2xl object-contain"
+                      priority
+                    />
+                    <p className="text-xs font-bold uppercase tracking-[0.22em] text-muted">Your Ledger</p>
+                  </div>
+                  <h2 className="text-xl font-extrabold tracking-tight text-primary">See where you stand.</h2>
+                  <p className="text-sm leading-6 text-muted">Local-first borrowing power, cashflow, and home loan planning.</p>
+                </div>
+              </Link>
               <button
                 type="button"
                 className="rounded-full border border-outline bg-surface px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-muted lg:hidden"

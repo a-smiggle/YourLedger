@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -75,10 +76,20 @@ export function MarketingHeader({ sections = [] }: MarketingHeaderProps) {
     <header className="sticky top-0 z-50 border-b border-outline bg-background/92 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-4 lg:px-10">
         <div className="flex items-center justify-between gap-6">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-muted">Your Ledger</p>
-            <p className="mt-2 text-lg font-semibold text-primary">See where you stand. Plan your next step.</p>
-          </div>
+          <Link href="/" className="flex items-center gap-4">
+            <Image
+              src="/YourLedgerIcon.png"
+              alt="Your Ledger"
+              width={124}
+              height={72}
+              className="h-24 w-24 rounded-2xl object-contain"
+              priority
+            />
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-muted">Your Ledger</p>
+              <p className="mt-2 text-lg font-semibold text-primary">See where you stand. Plan your next step.</p>
+            </div>
+          </Link>
 
           <div className="flex items-center gap-3">
               <nav className="flex flex-wrap items-center gap-2 text-sm font-semibold text-muted">
