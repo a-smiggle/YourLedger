@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 
 import { MarketingFooter } from "@/components/marketing-footer";
 import { MarketingHeader } from "@/components/marketing-header";
+import { useAppData } from "@/components/app-data-provider";
 import { marketingSectionLinks } from "@/components/marketing-nav";
 import { MetricCard } from "@/components/metric-card";
 import { SectionCard } from "@/components/section-card";
@@ -9,7 +12,7 @@ import { LandingSessionRedirect } from "@/components/session-navigation";
 import { SponsoredPanel } from "@/components/sponsored-panel";
 import { BorrowingPowerChart } from "@/charts/borrowing-power-chart";
 import { calculateBorrowingPower } from "@/engine/borrowing-power";
-import { demoProfile, scenarioSummaries } from "@/modules/demo-data";
+import { buildScenarioSummaries } from "@/engine/scenario-summaries";
 
 const planningHighlights = [
   {
@@ -33,7 +36,9 @@ const productSteps = [
 ];
 
 export default function LandingPage() {
-  const result = calculateBorrowingPower(demoProfile);
+  const { userData, bankData } = useAppData();
+  const result = calculateBorrowingPower(userData.profile);
+  const scenarioSummaries = buildScenarioSummaries(userData, bankData);
   const netPosition = result.totalAssets - result.totalLiabilities;
 
   return (
@@ -139,12 +144,12 @@ export default function LandingPage() {
             />
             <MetricCard
               label="Household members"
-              value={demoProfile.members.length.toString()}
+              value={userData.profile.members.length.toString()}
               detail="Supports planning for multiple applicants within one household view."
             />
             <MetricCard
               label="Dependants"
-              value={demoProfile.dependants.toString()}
+              value={userData.profile.dependants.toString()}
               detail="Household structure can be reflected in the expense assessment approach."
             />
           </div>

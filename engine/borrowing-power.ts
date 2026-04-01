@@ -12,6 +12,16 @@ function monthlyRepaymentFactor(ratePercent: number, loanTermYears: number) {
   return (1 - Math.pow(1 + monthlyRate, -periods)) / monthlyRate;
 }
 
+export function calculateMonthlyRepayment(loanAmount: number, ratePercent: number, loanTermYears: number) {
+  const factor = monthlyRepaymentFactor(ratePercent, loanTermYears);
+
+  if (factor === 0) {
+    return 0;
+  }
+
+  return loanAmount / factor;
+}
+
 export function calculateBorrowingPower(profile: HouseholdProfile): BorrowingPowerResult {
   const income = profile.members.reduce((total, member) => {
     const shadedBonus = member.annualBonusIncome * lendingAssumptions.bonusShading;

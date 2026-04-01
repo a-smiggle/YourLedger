@@ -1,9 +1,13 @@
+"use client";
+
 import { AppShell } from "@/components/app-shell";
+import { useAppData } from "@/components/app-data-provider";
 import { PageHero } from "@/components/page-hero";
 import { SectionCard } from "@/components/section-card";
-import { demoProfile } from "@/modules/demo-data";
 
 export default function AssetsLiabilitiesPage() {
+  const { userData } = useAppData();
+
   return (
     <AppShell>
       <div className="space-y-8">
@@ -16,7 +20,7 @@ export default function AssetsLiabilitiesPage() {
         <div className="grid gap-6 lg:grid-cols-2">
           <SectionCard title="Assets" subtitle="Current sample asset register.">
             <div className="space-y-3">
-              {demoProfile.assets.map((asset) => (
+              {userData.profile.assets.map((asset) => (
                 <div key={asset.id} className="flex items-center justify-between rounded-2xl bg-surface-low px-4 py-3 text-sm">
                   <span className="text-ink">{asset.label}</span>
                   <span className="text-muted">${asset.value.toLocaleString()}</span>
@@ -27,7 +31,7 @@ export default function AssetsLiabilitiesPage() {
 
           <SectionCard title="Liabilities" subtitle="Current sample debt register.">
             <div className="space-y-3">
-              {demoProfile.liabilities.map((liability) => (
+              {userData.profile.liabilities.map((liability) => (
                 <div key={liability.id} className="rounded-2xl bg-surface-low px-4 py-3 text-sm text-muted">
                   <div className="flex items-center justify-between">
                     <span className="text-ink">{liability.label}</span>

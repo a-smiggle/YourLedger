@@ -1,12 +1,15 @@
+"use client";
+
 import { AppShell } from "@/components/app-shell";
+import { useAppData } from "@/components/app-data-provider";
 import { MetricCard } from "@/components/metric-card";
 import { PageHero } from "@/components/page-hero";
 import { SectionCard } from "@/components/section-card";
 import { calculateBorrowingPower } from "@/engine/borrowing-power";
-import { demoProfile } from "@/modules/demo-data";
 
 export default function ResultsPage() {
-  const result = calculateBorrowingPower(demoProfile);
+  const { userData } = useAppData();
+  const result = calculateBorrowingPower(userData.profile);
 
   return (
     <AppShell>
@@ -14,13 +17,13 @@ export default function ResultsPage() {
         <PageHero
           eyebrow="Results"
           title="Present borrowing power outcomes in a way that is conservative, legible, and testable."
-          description="The seeded result here is produced by the pure TypeScript serviceability function, not by hard-coded UI values."
+          description="These results are produced from the persisted household profile by the pure TypeScript serviceability engine."
         />
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <MetricCard label="Borrowing power" value={`$${result.estimatedBorrowingPower.toLocaleString()}`} detail="Indicative maximum borrowing estimate." />
           <MetricCard label="Assessed rate" value={`${result.assessedRepaymentRate.toFixed(2)}%`} detail="Target rate plus serviceability buffer." />
-          <MetricCard label="Assets" value={`$${result.totalAssets.toLocaleString()}`} detail="Total asset position across seeded data." />
+          <MetricCard label="Assets" value={`$${result.totalAssets.toLocaleString()}`} detail="Total asset position across the current household profile." />
           <MetricCard label="Liabilities" value={`$${result.totalLiabilities.toLocaleString()}`} detail="Outstanding balances before refinance modelling." />
         </div>
 

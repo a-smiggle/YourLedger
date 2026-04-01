@@ -1,13 +1,18 @@
+"use client";
+
+import { useAppData } from "@/components/app-data-provider";
 import { AppShell } from "@/components/app-shell";
 import { MetricCard } from "@/components/metric-card";
 import { SectionCard } from "@/components/section-card";
 import { DashboardSessionPreference } from "@/components/session-navigation";
 import { BorrowingPowerChart } from "@/charts/borrowing-power-chart";
 import { calculateBorrowingPower } from "@/engine/borrowing-power";
-import { demoProfile, scenarioSummaries } from "@/modules/demo-data";
+import { buildScenarioSummaries } from "@/engine/scenario-summaries";
 
 export default function DashboardPage() {
-  const result = calculateBorrowingPower(demoProfile);
+  const { userData, bankData } = useAppData();
+  const result = calculateBorrowingPower(userData.profile);
+  const scenarioSummaries = buildScenarioSummaries(userData, bankData);
 
   return (
     <AppShell>
@@ -58,7 +63,7 @@ export default function DashboardPage() {
         <div className="grid gap-6 lg:grid-cols-3">
           <SectionCard title="Income foundation" subtitle="Multiple household members and shaded income sources.">
             <ul className="space-y-3 text-sm text-muted">
-              {demoProfile.members.map((member) => (
+              {userData.profile.members.map((member) => (
                 <li key={member.id} className="rounded-2xl bg-surface-low px-4 py-3">
                   <span className="block font-semibold text-ink">{member.name}</span>
                   <span className="block mt-1">Gross income ${member.annualGrossIncome.toLocaleString()}</span>
@@ -69,7 +74,7 @@ export default function DashboardPage() {
 
           <SectionCard title="Expense posture" subtitle="Declared living expenses versus conservative floors.">
             <div className="space-y-3 text-sm text-muted">
-              {Object.entries(demoProfile.monthlyExpenses).map(([label, value]) => (
+              {Object.entries(userData.profile.monthlyExpenses).map(([label, value]) => (
                 <div key={label} className="flex items-center justify-between rounded-2xl bg-surface-low px-4 py-3">
                   <span className="capitalize text-ink">{label}</span>
                   <span>${value.toLocaleString()}</span>

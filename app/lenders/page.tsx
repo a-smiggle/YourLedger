@@ -1,11 +1,16 @@
+"use client";
+
 import { AppShell } from "@/components/app-shell";
+import { useAppData } from "@/components/app-data-provider";
 import { PageHero } from "@/components/page-hero";
 import { SectionCard } from "@/components/section-card";
-import { demoBankData } from "@/modules/demo-data";
+import { resolveBankInstitutions } from "@/engine/scenario-summaries";
 
 export default function LendersPage() {
-  const lastRefreshedLabel = demoBankData.refresh.lastRefreshedAt
-    ? new Date(demoBankData.refresh.lastRefreshedAt).toLocaleDateString("en-AU", {
+  const { bankData } = useAppData();
+  const banks = resolveBankInstitutions(bankData);
+  const lastRefreshedLabel = bankData.refresh.lastRefreshedAt
+    ? new Date(bankData.refresh.lastRefreshedAt).toLocaleDateString("en-AU", {
         day: "numeric",
         month: "short",
         year: "numeric",
@@ -23,10 +28,10 @@ export default function LendersPage() {
 
         <SectionCard
           title="Sample lender directory"
-          subtitle={`Seeded from BankData. Last refreshed ${lastRefreshedLabel}.`}
+          subtitle={`Loaded from BankData with overrides applied. Last refreshed ${lastRefreshedLabel}.`}
         >
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {demoBankData.banks.map((lender) => (
+            {banks.map((lender) => (
               <article key={lender.id} className="rounded-2xl bg-surface-low p-5 text-sm text-muted">
                 <h3 className="text-lg font-bold text-primary">{lender.name}</h3>
                 <p className="mt-3">Credit profile: {lender.profileSummary ?? "Policy details pending."}</p>
