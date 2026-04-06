@@ -2,6 +2,7 @@ export type HouseholdMember = {
   id: string;
   name: string;
   annualGrossIncome: number;
+  superContributionRate: number;
   annualBonusIncome: number;
   annualRentalIncome: number;
   hasHecsHelpDebt: boolean;
@@ -28,7 +29,9 @@ export type Asset = {
   value: number;
   readingDate: string;
   expectedMonthlyContribution?: number;
+  additionalMonthlyContribution?: number;
   annualGrowthRate?: number;
+  linkedMemberId?: string;
   category: "cash" | "property" | "super" | "vehicle" | "other";
 };
 

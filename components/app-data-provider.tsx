@@ -24,25 +24,57 @@ function fallbackReadingDate(updatedAt?: string) {
   return (updatedAt ?? demoUserData.meta.updatedAt).slice(0, 10);
 }
 
+function calculateBaseMonthlySuperContribution(annualGrossIncome: number, superContributionRate: number) {
+  return Math.round(annualGrossIncome * (superContributionRate / 100) / 12);
+}
+
 function normalizeUserData(userData: UserData): UserData {
   const assetReadingDate = fallbackReadingDate(userData.meta.updatedAt);
+  const members = userData.profile.members.map((member, index) => ({
+    ...demoUserData.profile.members[index],
+    ...member,
+    superContributionRate:
+      member.superContributionRate ?? demoUserData.profile.members[index]?.superContributionRate ?? 12,
+  }));
+  const superAssetMemberIds = members.map((member) => member.id);
+  let seenUnlinkedSuperAssets = 0;
+
+  const assets = userData.profile.assets.map((asset, index) => {
+    const seededAsset = demoUserData.profile.assets[index];
+    const linkedMemberId =
+      asset.category === "super"
+        ? asset.linkedMemberId ?? superAssetMemberIds[seenUnlinkedSuperAssets++]
+        : asset.linkedMemberId;
+    const linkedMember = linkedMemberId ? members.find((member) => member.id === linkedMemberId) : undefined;
+    const baseSuperContribution = linkedMember
+      ? calculateBaseMonthlySuperContribution(linkedMember.annualGrossIncome, linkedMember.superContributionRate)
+      : 0;
+    const legacyExpectedContribution = asset.expectedMonthlyContribution ?? seededAsset?.expectedMonthlyContribution ?? 0;
+
+    return {
+      ...seededAsset,
+      ...asset,
+      readingDate: asset.readingDate ?? assetReadingDate,
+      linkedMemberId,
+      expectedMonthlyContribution: legacyExpectedContribution,
+      additionalMonthlyContribution:
+        asset.additionalMonthlyContribution ??
+        (asset.category === "super" ? Math.max(legacyExpectedContribution - baseSuperContribution, 0) : legacyExpectedContribution),
+      annualGrowthRate: asset.annualGrowthRate ?? seededAsset?.annualGrowthRate,
+    };
+  });
 
   return {
     ...userData,
     profile: {
       ...demoUserData.profile,
       ...userData.profile,
+      members,
       monthlyExpenses: {
         ...demoUserData.profile.monthlyExpenses,
         ...userData.profile.monthlyExpenses,
       },
-      assets: userData.profile.assets.map((asset, index) => ({
-        ...demoUserData.profile.assets[index],
-        ...asset,
-        readingDate: asset.readingDate ?? assetReadingDate,
-        expectedMonthlyContribution: asset.expectedMonthlyContribution ?? demoUserData.profile.assets[index]?.expectedMonthlyContribution,
-        annualGrowthRate: asset.annualGrowthRate ?? demoUserData.profile.assets[index]?.annualGrowthRate,
-      })),
+      assets,
     },
   };
 }

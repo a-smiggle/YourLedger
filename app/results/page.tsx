@@ -25,7 +25,7 @@ export default function ResultsPage() {
         <PageHero
           eyebrow="Results"
           title="Review borrowing outcomes, monthly cashflow, and projected asset balances in one results workspace."
-          description="These results are produced from the persisted household profile by the calculation and projection engines, using current ATO tax bands plus default super-guarantee assumptions."
+          description="These results are produced from the persisted household profile by the calculation and projection engines, using current ATO tax bands plus member-level super contribution settings."
         />
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -50,8 +50,8 @@ export default function ResultsPage() {
           <SectionCard title="Projection assumptions" subtitle="Defaults are prefilled from current Australian tax and super settings.">
             <div className="space-y-3 text-sm text-muted">
               <p>
-                <span className="font-semibold text-ink">Super guarantee default:</span>{" "}
-                {(assetProjectionSummary.assumptions.superGuaranteeRate * 100).toFixed(0)}% of annual gross wages.
+                <span className="font-semibold text-ink">Super contribution baseline:</span>{" "}
+                {(assetProjectionSummary.assumptions.superGuaranteeRate * 100).toFixed(0)}% default, overridden by each member&apos;s Super % where provided.
               </p>
               <p>
                 <span className="font-semibold text-ink">Income tax basis:</span> ATO resident tax rates for 2025-26.

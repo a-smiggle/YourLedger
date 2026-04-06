@@ -80,10 +80,24 @@ function projectAssetValue(asset: Asset, monthlyContribution: number, annualGrow
 
 function buildSuggestedContribution(asset: Asset, profile: HouseholdProfile, monthlySurplusAfterExpenses: number) {
   if (asset.category === "super") {
-    const annualGrossIncome = profile.members.reduce((total, member) => total + member.annualGrossIncome, 0);
+    const linkedMember = asset.linkedMemberId
+      ? profile.members.find((member) => member.id === asset.linkedMemberId)
+      : undefined;
+
+    if (!linkedMember) {
+      return {
+        amount: 0,
+        label: "No linked member for this super asset",
+      };
+    }
+
+    const superContributionRate = linkedMember.superContributionRate ?? SUPER_GUARANTEE_RATE * 100;
+    const baseMonthlyContribution = linkedMember.annualGrossIncome * (superContributionRate / 100) / 12;
+    const additionalMonthlyContribution = asset.additionalMonthlyContribution ?? 0;
+
     return {
-      amount: annualGrossIncome * SUPER_GUARANTEE_RATE / 12,
-      label: `ATO super guarantee default: ${(SUPER_GUARANTEE_RATE * 100).toFixed(0)}% of annual gross wages`,
+      amount: baseMonthlyContribution + additionalMonthlyContribution,
+      label: `Super input: ${superContributionRate.toFixed(1)}% base from linked member + additional monthly contribution`,
     };
   }
 
@@ -111,7 +125,10 @@ export function buildAssetProjectionSummary(profile: HouseholdProfile): AssetPro
 
   const assetProjections: AssetProjection[] = profile.assets.map((asset) => {
     const suggestedContribution = buildSuggestedContribution(asset, profile, monthlySurplusAfterExpenses);
-    const projectedMonthlyContribution = asset.expectedMonthlyContribution ?? suggestedContribution.amount;
+    const projectedMonthlyContribution =
+      asset.category === "super"
+        ? suggestedContribution.amount
+        : asset.expectedMonthlyContribution ?? suggestedContribution.amount;
     const annualGrowthRate = asset.annualGrowthRate ?? DEFAULT_GROWTH_BY_CATEGORY[asset.category];
     const monthsToHorizon = monthsBetween(asset.readingDate, currentDate) + 12;
 

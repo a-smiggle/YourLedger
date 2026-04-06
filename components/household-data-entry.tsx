@@ -20,6 +20,7 @@ const expenseFields: Array<{ key: keyof ExpenseBreakdown; label: string }> = [
 
 const assetCategoryOptions: Asset["category"][] = ["cash", "property", "super", "vehicle", "other"];
 const liabilityCategoryOptions: Liability["category"][] = ["home-loan", "credit-card", "personal-loan", "car-loan", "other"];
+const SUPER_GUARANTEE_RATE = 0.12;
 
 function getDefaultReadingDate() {
   return new Date().toISOString().slice(0, 10);
@@ -36,12 +37,95 @@ function createId(prefix: string) {
 function createMember(order: number): HouseholdMember {
   return {
     id: createId("member"),
-    name: `Applicant ${order}`,
+    name: buildDefaultApplicantName(order),
     annualGrossIncome: 0,
+    superContributionRate: 12,
     annualBonusIncome: 0,
     annualRentalIncome: 0,
     hasHecsHelpDebt: false,
   };
+}
+
+function calculateDefaultSuperContribution(annualGrossIncome: number, superContributionRate = SUPER_GUARANTEE_RATE * 100) {
+  return Math.round(annualGrossIncome * (superContributionRate / 100) / 12);
+}
+
+function buildDefaultApplicantName(order: number) {
+  return `Applicant ${order}`;
+}
+
+function buildDefaultSuperLabel(order: number, memberName: string) {
+  const cleanedName = memberName.trim();
+  const applicantName = cleanedName || buildDefaultApplicantName(order);
+  return `Super - ${applicantName}`;
+}
+
+function createSuperAsset(order: number, member: HouseholdMember): Asset {
+  const baseMonthlyContribution = calculateDefaultSuperContribution(member.annualGrossIncome, member.superContributionRate);
+
+  return {
+    id: createId("asset"),
+    label: buildDefaultSuperLabel(order, member.name),
+    value: 0,
+    readingDate: getDefaultReadingDate(),
+    expectedMonthlyContribution: baseMonthlyContribution,
+    additionalMonthlyContribution: 0,
+    annualGrowthRate: 7,
+    linkedMemberId: member.id,
+    category: "super",
+  };
+}
+
+function getSuperAssetIndexByMemberOrder(assets: Asset[], memberIndex: number) {
+  let seenSuperAssets = 0;
+
+  for (let assetIndex = 0; assetIndex < assets.length; assetIndex += 1) {
+    if (assets[assetIndex].category !== "super") {
+      continue;
+    }
+
+    if (seenSuperAssets === memberIndex) {
+      return assetIndex;
+    }
+
+    seenSuperAssets += 1;
+  }
+
+  return -1;
+}
+
+function getSuperAssetIndexForMember(assets: Asset[], memberId: string, memberIndex: number) {
+  const linkedSuperAssetIndex = assets.findIndex((asset) => asset.category === "super" && asset.linkedMemberId === memberId);
+
+  if (linkedSuperAssetIndex >= 0) {
+    return linkedSuperAssetIndex;
+  }
+
+  return getSuperAssetIndexByMemberOrder(assets, memberIndex);
+}
+
+function isAutoManagedSuperLabel(label: string, order: number, previousMemberName: string) {
+  const trimmedLabel = label.trim();
+
+  if (!trimmedLabel) {
+    return true;
+  }
+
+  const fallbackApplicantName = buildDefaultApplicantName(order);
+  const previousCleanName = previousMemberName.trim() || fallbackApplicantName;
+
+  const knownDefaults = new Set<string>([
+    buildDefaultSuperLabel(order, previousMemberName),
+    `Super - ${fallbackApplicantName}`,
+    `Superannuation - ${previousCleanName}`,
+    `Superannuation - ${fallbackApplicantName}`,
+  ]);
+
+  if (order === 1) {
+    knownDefaults.add("Superannuation");
+  }
+
+  return knownDefaults.has(trimmedLabel);
 }
 
 function createAsset(order: number): Asset {
@@ -231,10 +315,20 @@ export function IncomeExpensesEditor() {
   };
 
   const addMember = () => {
-    commitProfile((currentProfile) => ({
-      ...currentProfile,
-      members: [...currentProfile.members, createMember(currentProfile.members.length + 1)],
-    }));
+    commitProfile((currentProfile) => {
+      const nextOrder = currentProfile.members.length + 1;
+      const nextMember = createMember(nextOrder);
+      const existingSuperAssetCount = currentProfile.assets.filter((asset) => asset.category === "super").length;
+      const shouldAddSuperAsset = existingSuperAssetCount < nextOrder;
+
+      return {
+        ...currentProfile,
+        members: [...currentProfile.members, nextMember],
+        assets: shouldAddSuperAsset
+          ? [...currentProfile.assets, createSuperAsset(nextOrder, nextMember)]
+          : currentProfile.assets,
+      };
+    });
   };
 
   const removeMember = (memberId: string) => {
@@ -295,6 +389,7 @@ export function IncomeExpensesEditor() {
             {profile.members.map((member, index) => {
               const nameError = member.name.trim() ? undefined : "Name is required.";
               const grossIncomeError = member.annualGrossIncome < 0 ? "Gross income must be zero or more." : undefined;
+              const superRateError = member.superContributionRate < 0 ? "Super % must be zero or more." : undefined;
               const bonusIncomeError = member.annualBonusIncome < 0 ? "Bonus income must be zero or more." : undefined;
               const rentalIncomeError = member.annualRentalIncome < 0 ? "Rental income must be zero or more." : undefined;
 
@@ -320,12 +415,46 @@ export function IncomeExpensesEditor() {
                       <input
                         value={member.name}
                         onChange={(event) =>
-                          commitProfile((currentProfile) => ({
-                            ...currentProfile,
-                            members: currentProfile.members.map((candidate) =>
-                              candidate.id === member.id ? { ...candidate, name: event.target.value } : candidate,
-                            ),
-                          }))
+                          commitProfile((currentProfile) => {
+                            const nextMemberName = event.target.value;
+                            const memberIndex = currentProfile.members.findIndex((candidate) => candidate.id === member.id);
+
+                            if (memberIndex < 0) {
+                              return currentProfile;
+                            }
+
+                            const previousMemberName = currentProfile.members[memberIndex].name;
+                            const order = memberIndex + 1;
+                            const nextDefaultLabel = buildDefaultSuperLabel(order, nextMemberName);
+                            const superAssetIndex = getSuperAssetIndexForMember(currentProfile.assets, member.id, memberIndex);
+
+                            const members = currentProfile.members.map((candidate) =>
+                              candidate.id === member.id ? { ...candidate, name: nextMemberName } : candidate,
+                            );
+
+                            const assets = currentProfile.assets.map((candidate, assetIndex) => {
+                              if (assetIndex !== superAssetIndex) {
+                                return candidate;
+                              }
+
+                              const shouldRefreshDefaultLabel = isAutoManagedSuperLabel(candidate.label, order, previousMemberName);
+
+                              if (!shouldRefreshDefaultLabel) {
+                                return candidate;
+                              }
+
+                              return {
+                                ...candidate,
+                                label: nextDefaultLabel,
+                              };
+                            });
+
+                            return {
+                              ...currentProfile,
+                              members,
+                              assets,
+                            };
+                          })
                         }
                         className={textFieldClassName(Boolean(nameError))}
                         placeholder="Full name"
@@ -362,6 +491,26 @@ export function IncomeExpensesEditor() {
                           }))
                         }
                         className={textFieldClassName(Boolean(grossIncomeError))}
+                      />
+                    </Field>
+
+                    <Field label="Super contribution %" error={superRateError}>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        value={member.superContributionRate}
+                        onChange={(event) =>
+                          commitProfile((currentProfile) => ({
+                            ...currentProfile,
+                            members: currentProfile.members.map((candidate) =>
+                              candidate.id === member.id
+                                ? { ...candidate, superContributionRate: parseNumberInput(event.target.value) }
+                                : candidate,
+                            ),
+                          }))
+                        }
+                        className={textFieldClassName(Boolean(superRateError))}
                       />
                     </Field>
 
@@ -532,10 +681,25 @@ export function AssetsLiabilitiesEditor() {
         ) : (
           <div className="space-y-4">
             {profile.assets.map((asset) => {
+              const linkedMember =
+                asset.category === "super" && asset.linkedMemberId
+                  ? profile.members.find((member) => member.id === asset.linkedMemberId)
+                  : undefined;
+              const baseMonthlySuperContribution =
+                asset.category === "super" && linkedMember
+                  ? calculateDefaultSuperContribution(linkedMember.annualGrossIncome, linkedMember.superContributionRate)
+                  : 0;
               const labelError = asset.label.trim() ? undefined : "Asset label is required.";
               const valueError = asset.value < 0 ? "Asset value must be zero or more." : undefined;
               const readingDateError = asset.readingDate.trim() ? undefined : "Reading date is required.";
-              const contributionError = (asset.expectedMonthlyContribution ?? 0) < 0 ? "Monthly contribution must be zero or more." : undefined;
+              const contributionError =
+                asset.category === "super"
+                  ? (asset.additionalMonthlyContribution ?? 0) < 0
+                    ? "Additional contribution must be zero or more."
+                    : undefined
+                  : (asset.expectedMonthlyContribution ?? 0) < 0
+                    ? "Monthly contribution must be zero or more."
+                    : undefined;
               const growthRateError = (asset.annualGrowthRate ?? 0) < 0 ? "Annual growth rate must be zero or more." : undefined;
 
               return (
@@ -633,25 +797,61 @@ export function AssetsLiabilitiesEditor() {
                       />
                     </Field>
 
-                    <Field label="Expected monthly input" error={contributionError}>
-                      <input
-                        type="number"
-                        min="0"
-                        step="10"
-                        value={asset.expectedMonthlyContribution ?? 0}
-                        onChange={(event) =>
-                          commitProfile((currentProfile) => ({
-                            ...currentProfile,
-                            assets: currentProfile.assets.map((candidate) =>
-                              candidate.id === asset.id
-                                ? { ...candidate, expectedMonthlyContribution: parseNumberInput(event.target.value) }
-                                : candidate,
-                            ),
-                          }))
-                        }
-                        className={textFieldClassName(Boolean(contributionError))}
-                      />
-                    </Field>
+                    {asset.category === "super" ? (
+                      <>
+                        <Field label="Base super contribution">
+                          <div className="mt-2 rounded-2xl border border-outline bg-surface-low px-4 py-3 text-sm text-muted">
+                            ${baseMonthlySuperContribution.toLocaleString()} / month
+                            {linkedMember ? ` (${linkedMember.superContributionRate.toFixed(1)}% of ${linkedMember.name})` : " (no linked member)"}
+                          </div>
+                        </Field>
+
+                        <Field label="Additional contribution" error={contributionError}>
+                          <input
+                            type="number"
+                            min="0"
+                            step="10"
+                            value={asset.additionalMonthlyContribution ?? 0}
+                            onChange={(event) =>
+                              commitProfile((currentProfile) => ({
+                                ...currentProfile,
+                                assets: currentProfile.assets.map((candidate) =>
+                                  candidate.id === asset.id
+                                    ? {
+                                        ...candidate,
+                                        additionalMonthlyContribution: parseNumberInput(event.target.value),
+                                        expectedMonthlyContribution:
+                                          baseMonthlySuperContribution + parseNumberInput(event.target.value),
+                                      }
+                                    : candidate,
+                                ),
+                              }))
+                            }
+                            className={textFieldClassName(Boolean(contributionError))}
+                          />
+                        </Field>
+                      </>
+                    ) : (
+                      <Field label="Expected monthly input" error={contributionError}>
+                        <input
+                          type="number"
+                          min="0"
+                          step="10"
+                          value={asset.expectedMonthlyContribution ?? 0}
+                          onChange={(event) =>
+                            commitProfile((currentProfile) => ({
+                              ...currentProfile,
+                              assets: currentProfile.assets.map((candidate) =>
+                                candidate.id === asset.id
+                                  ? { ...candidate, expectedMonthlyContribution: parseNumberInput(event.target.value) }
+                                  : candidate,
+                              ),
+                            }))
+                          }
+                          className={textFieldClassName(Boolean(contributionError))}
+                        />
+                      </Field>
+                    )}
 
                     <Field label="Annual growth rate" error={growthRateError}>
                       <input
