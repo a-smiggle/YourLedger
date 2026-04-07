@@ -53,20 +53,6 @@ function calculateMonthlyLiabilities(profile: HouseholdProfile) {
   return profile.liabilities.reduce((total, liability) => total + liability.monthlyRepayment, 0);
 }
 
-function monthsBetween(startDate: string, endDate: Date) {
-  const start = new Date(`${startDate}T00:00:00`);
-
-  if (Number.isNaN(start.getTime())) {
-    return 0;
-  }
-
-  const yearDiff = endDate.getFullYear() - start.getFullYear();
-  const monthDiff = endDate.getMonth() - start.getMonth();
-  const totalMonths = yearDiff * 12 + monthDiff;
-
-  return Math.max(totalMonths, 0);
-}
-
 function projectAssetValue(asset: Asset, monthlyContribution: number, annualGrowthRate: number, months: number) {
   const monthlyGrowthRate = annualGrowthRate / 100 / 12;
   let projectedValue = asset.value;
@@ -76,6 +62,16 @@ function projectAssetValue(asset: Asset, monthlyContribution: number, annualGrow
   }
 
   return projectedValue;
+}
+
+function buildMonthLabel(monthOffset: number) {
+  const currentDate = new Date();
+  const date = new Date(currentDate.getFullYear(), currentDate.getMonth() + monthOffset, 1);
+
+  return date.toLocaleDateString("en-AU", {
+    month: "short",
+    year: "numeric",
+  });
 }
 
 function buildSuggestedContribution(asset: Asset, profile: HouseholdProfile, monthlySurplusAfterExpenses: number) {
@@ -115,8 +111,7 @@ function buildSuggestedContribution(asset: Asset, profile: HouseholdProfile, mon
   };
 }
 
-export function buildAssetProjectionSummary(profile: HouseholdProfile): AssetProjectionSummary {
-  const currentDate = new Date();
+export function buildAssetProjectionSummary(profile: HouseholdProfile, horizonMonths = 12): AssetProjectionSummary {
   const afterTaxAnnualIncome = calculateAfterTaxAnnualIncome(profile);
   const afterTaxMonthlyIncome = afterTaxAnnualIncome / 12;
   const monthlyDeclaredExpenses = calculateMonthlyDeclaredExpenses(profile);
@@ -130,7 +125,6 @@ export function buildAssetProjectionSummary(profile: HouseholdProfile): AssetPro
         ? suggestedContribution.amount
         : asset.expectedMonthlyContribution ?? suggestedContribution.amount;
     const annualGrowthRate = asset.annualGrowthRate ?? DEFAULT_GROWTH_BY_CATEGORY[asset.category];
-    const monthsToHorizon = monthsBetween(asset.readingDate, currentDate) + 12;
 
     return {
       assetId: asset.id,
@@ -140,13 +134,13 @@ export function buildAssetProjectionSummary(profile: HouseholdProfile): AssetPro
       currentValue: asset.value,
       projectedMonthlyContribution,
       annualGrowthRate,
-      projected12MonthValue: Math.round(projectAssetValue(asset, projectedMonthlyContribution, annualGrowthRate, monthsToHorizon)),
+      projectedHorizonValue: Math.round(projectAssetValue(asset, projectedMonthlyContribution, annualGrowthRate, horizonMonths)),
       suggestedContributionLabel: suggestedContribution.label,
     };
   });
 
-  const timeline: AssetProjectionPoint[] = Array.from({ length: 13 }, (_, monthOffset) => {
-    const monthLabel = monthOffset === 0 ? "Now" : `+${monthOffset}m`;
+  const timeline: AssetProjectionPoint[] = Array.from({ length: horizonMonths + 1 }, (_, monthOffset) => {
+    const monthLabel = buildMonthLabel(monthOffset);
     const timelineValues = assetProjections.map((projection) => {
       const asset = profile.assets.find((candidate) => candidate.id === projection.assetId);
       return asset
@@ -170,6 +164,7 @@ export function buildAssetProjectionSummary(profile: HouseholdProfile): AssetPro
   });
 
   return {
+    horizonMonths,
     assumptions: {
       superGuaranteeRate: SUPER_GUARANTEE_RATE,
       medicareLevyRate: MEDICARE_LEVY_RATE,

@@ -18,6 +18,12 @@ const calculationNotes = [
   "Outputs are indicative planning estimates only.",
 ];
 
+const workflowSteps = [
+  "Start with Income & Expenses to capture household servicing inputs.",
+  "Use Assets & Liabilities to confirm cash, property, debts, and current repayments.",
+  "Set up the deal in Scenarios, compare products in Lenders, then review the outcome in Results.",
+];
+
 export function DashboardInfoActions() {
   const [activeDialog, setActiveDialog] = useState<ActiveDialog>(null);
   const [isMounted, setIsMounted] = useState(false);
@@ -124,6 +130,17 @@ export function DashboardInfoActions() {
                 ) : (
                   <div className="mt-8 grid gap-6 lg:grid-cols-2">
                     <section className="rounded-panel bg-surface-low p-6">
+                      <h3 className="text-lg font-bold text-primary">Recommended use</h3>
+                      <ul className="mt-4 space-y-3 text-sm leading-7 text-muted">
+                        {workflowSteps.map((step) => (
+                          <li key={step} className="rounded-2xl bg-surface px-4 py-4">
+                            {step}
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+
+                    <section className="rounded-panel bg-surface-low p-6">
                       <h3 className="text-lg font-bold text-primary">Calculation approach</h3>
                       <ul className="mt-4 space-y-3 text-sm leading-7 text-muted">
                         {calculationNotes.map((note) => (
@@ -134,7 +151,7 @@ export function DashboardInfoActions() {
                       </ul>
                     </section>
 
-                    <section className="rounded-panel bg-surface-low p-6">
+                    <section className="rounded-panel bg-surface-low p-6 lg:col-span-2">
                       <h3 className="text-lg font-bold text-primary">Privacy and disclaimer</h3>
                       <div className="mt-4 space-y-4 text-sm leading-7 text-muted">
                         <p>All calculations run locally in your browser. No profile data is sent to an external service by default.</p>

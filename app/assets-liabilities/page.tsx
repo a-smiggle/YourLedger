@@ -11,7 +11,7 @@ export default function AssetsLiabilitiesPage() {
         <PageHero
           eyebrow="Assets & Liabilities"
           title="Model property, cash, super, and debt positions in a single household statement."
-          description="Maintain the household balance sheet directly in the app so assets, liabilities, and repayments stay current everywhere else."
+          description="Once the household balance sheet is current, continue to Lenders & Products to review all loaded lenders and choose the products you want to compare."
         />
 
         <AssetsLiabilitiesEditor />

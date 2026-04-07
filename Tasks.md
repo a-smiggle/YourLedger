@@ -70,7 +70,7 @@
 ## UX, Accessibility, And Polish
 
 - [ ] Add loading and hydration-safe states anywhere persisted browser data is required.
-- [ ] Improve navigation so primary tasks are obvious on desktop and mobile.
+- [x] Improve navigation so primary tasks are obvious on desktop and mobile.
 - [ ] Add success, error, and confirmation feedback for destructive or data-management actions.
 - [ ] Audit keyboard access, focus states, semantic markup, and screen-reader labels.
 - [ ] Audit responsive layouts across landing, dashboard, forms, charts, and results routes.

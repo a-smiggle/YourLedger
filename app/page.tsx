@@ -31,8 +31,8 @@ const planningHighlights = [
 
 const productSteps = [
   "Enter household income, expenses, assets, and liabilities in one place.",
-  "Review indicative borrowing capacity calculated locally using conservative assumptions.",
-  "Compare scenarios, understand the trade-offs, and export planning data when needed.",
+  "Set the deal up clearly with a property target, funding mix, and planned offset position.",
+  "Shortlist lenders against the actual deal and compare repayments, equity use, and borrowing headroom.",
 ];
 
 export default function LandingPage() {

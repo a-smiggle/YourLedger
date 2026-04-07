@@ -11,7 +11,7 @@ export default function IncomeExpensesPage() {
         <PageHero
           eyebrow="Income & Expenses"
           title="Capture household cashflow inputs before serviceability assumptions are applied."
-          description="This route mirrors the stitch information architecture but keeps the language grounded in calculator inputs instead of synthetic performance claims."
+          description="Start here. Once income, bonus, rental income, HELP settings, and living costs are current, move to Assets & Liabilities to complete the household position."
         />
 
         <IncomeExpensesEditor />

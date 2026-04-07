@@ -1,10 +1,12 @@
 "use client";
 
+import Link from "next/link";
+
 import { AppShell } from "@/components/app-shell";
 import { useAppData } from "@/components/app-data-provider";
 import { PageHero } from "@/components/page-hero";
 import { SectionCard } from "@/components/section-card";
-import { BorrowingPowerChart } from "@/charts/borrowing-power-chart";
+import { DealFitChart } from "@/charts/deal-fit-chart";
 import { buildScenarioSummaries, resolveBankInstitutions } from "@/engine/scenario-summaries";
 import type { ScenarioSummary, UserData, UserScenario } from "@/types/domain";
 
@@ -29,20 +31,28 @@ function getAvailableBanks(bankData: Parameters<typeof resolveBankInstitutions>[
     .filter((bank) => bank.products.length > 0);
 }
 
-function createStarterScenario(userData: UserData, bankData: Parameters<typeof resolveBankInstitutions>[0], order: number): UserScenario {
-  const bank = getAvailableBanks(bankData)[0];
-  const product = bank?.products[0];
+function createStarterScenario(userData: UserData, order: number): UserScenario {
+  const availableCash = userData.profile.assets.reduce(
+    (total, asset) => (asset.category === "cash" ? total + asset.value : total),
+    0,
+  );
+  const currentHomeLoanBalance = userData.profile.liabilities.reduce(
+    (total, liability) => (liability.category === "home-loan" ? total + liability.balance : total),
+    0,
+  );
 
   return {
     id: createId("scenario"),
-    label: product ? `${bank?.shortName ?? bank?.name} scenario ${order}` : `Scenario ${order}`,
-    description: product
-      ? `Comparison using ${bank?.name} ${product.name}.`
-      : "Comparison using the current household profile settings.",
-    bankId: bank?.id,
-    productId: product?.id,
-    targetInterestRate: product?.interestRate ?? userData.profile.targetInterestRate,
-    assessmentBuffer: bank?.creditPolicy.assessmentBuffer ?? userData.profile.assessmentBuffer,
+    label: `Scenario ${order}`,
+    description: "Deal setup for comparing lenders against a real purchase or refinance brief.",
+    propertyTreatment: "equity-release",
+    cashContribution: Math.round(availableCash),
+    hasOffsetAccount: false,
+    equityReleaseAmount: 0,
+    refinanceExistingLoanAmount: Math.round(currentHomeLoanBalance),
+    offsetBalance: 0,
+    targetInterestRate: userData.profile.targetInterestRate,
+    assessmentBuffer: userData.profile.assessmentBuffer,
     loanTermYears: userData.profile.loanTermYears,
   };
 }
@@ -118,6 +128,35 @@ function formatScenarioCurrency(value: number) {
   return `$${value.toLocaleString()}`;
 }
 
+function formatOptionalCurrency(value?: number) {
+  return value !== undefined ? formatScenarioCurrency(value) : "Not set yet";
+}
+
+function formatGapCurrency(value?: number) {
+  if (value === undefined) {
+    return "Set a target to compare capacity";
+  }
+
+  const absoluteValue = Math.abs(value).toLocaleString();
+  return value >= 0 ? `+$${absoluteValue}` : `-$${absoluteValue}`;
+}
+
+function formatOptionalPercentage(value?: number) {
+  return value !== undefined ? `${value.toFixed(1)}%` : "Not applicable";
+}
+
+function formatEligibility(summary?: ScenarioSummary) {
+  if (!summary) {
+    return "Unavailable";
+  }
+
+  if (summary.isProductEligible === undefined) {
+    return "No product selected";
+  }
+
+  return summary.isProductEligible ? "Eligible" : "Not eligible";
+}
+
 function getScenarioSummaryMap(summaries: ScenarioSummary[]) {
   return new Map(summaries.flatMap((summary) => (summary.id ? [[summary.id, summary] as const] : [])));
 }
@@ -145,6 +184,10 @@ export default function ScenariosPage() {
   const selectedScenario = userData.scenarios.find((scenario) => scenario.id === selectedScenarioId);
   const selectedBank = selectedScenario ? availableBanks.find((bank) => bank.id === selectedScenario.bankId) : undefined;
   const selectedProduct = selectedScenario ? selectedBank?.products.find((product) => product.id === selectedScenario.productId) : undefined;
+  const selectedEquityBank = selectedScenario ? availableBanks.find((bank) => bank.id === selectedScenario.equityBankId) : undefined;
+  const selectedEquityProduct = selectedScenario
+    ? selectedEquityBank?.products.find((product) => product.id === selectedScenario.equityProductId)
+    : undefined;
   const selectedSummary = selectedScenario ? scenarioSummaryMap.get(selectedScenario.id) : undefined;
   const selectedEffectiveValues = selectedScenario
     ? getEffectiveScenarioValues(userData, selectedScenario, selectedBank, selectedProduct)
@@ -162,7 +205,7 @@ export default function ScenariosPage() {
 
   const handleCreateStarterScenario = () => {
     setUserData((currentUserData) => {
-      const starterScenario = createStarterScenario(currentUserData, bankData, currentUserData.scenarios.length + 1);
+      const starterScenario = createStarterScenario(currentUserData, currentUserData.scenarios.length + 1);
       return updateScenarioStore(currentUserData, [...currentUserData.scenarios, starterScenario], starterScenario.id);
     });
   };
@@ -223,52 +266,27 @@ export default function ScenariosPage() {
     }));
   };
 
-  const handleBankChange = (scenarioId: string, bankId: string) => {
-    const nextBank = availableBanks.find((bank) => bank.id === bankId);
-    const nextProduct = nextBank?.products[0];
-
-    updateScenario(scenarioId, (scenario) => ({
-      ...scenario,
-      bankId: nextBank?.id,
-      productId: nextProduct?.id,
-      targetInterestRate: nextProduct?.interestRate ?? scenario.targetInterestRate,
-      assessmentBuffer: nextBank?.creditPolicy.assessmentBuffer ?? scenario.assessmentBuffer,
-      loanTermYears: Math.min(scenario.loanTermYears ?? userData.profile.loanTermYears, nextProduct?.maxTermYears ?? userData.profile.loanTermYears),
-    }));
-  };
-
-  const handleProductChange = (scenarioId: string, bankId: string, productId: string) => {
-    if (!bankId) {
-      return;
-    }
-
-    const nextBank = availableBanks.find((bank) => bank.id === bankId);
-    const nextProduct = nextBank?.products.find((product) => product.id === productId);
-
-    updateScenario(scenarioId, (scenario) => ({
-      ...scenario,
-      bankId,
-      productId,
-      targetInterestRate: nextProduct?.interestRate ?? scenario.targetInterestRate,
-      loanTermYears: Math.min(scenario.loanTermYears ?? userData.profile.loanTermYears, nextProduct?.maxTermYears ?? userData.profile.loanTermYears),
-    }));
-  };
-
   return (
     <AppShell>
       <div className="space-y-8">
         <PageHero
           eyebrow="Scenarios"
-          title="Compare lenders, products, and override settings in one local-first scenario workspace."
-          description="Use scenario CRUD, lender selection, and per-scenario overrides to compare borrowing outcomes without leaving the browser."
+          title="Define the deal first: property target, funding mix, and offset plan before you shortlist lenders."
+          description="Use this step to set the property target, decide whether the current property is kept or sold, then shape cash, equity release, refinance debt, and offset position. The lenders step then compares products against that debt structure."
         />
 
         <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-          <SectionCard title="Borrowing power comparison" subtitle="Scenario outcomes built from the persisted user and bank stores.">
-            <BorrowingPowerChart scenarios={scenarioSummaries} />
+          <SectionCard
+            title="Deal fit comparison"
+            subtitle="Compare the total debt each scenario carries against the borrowing power it currently produces."
+          >
+            <DealFitChart scenarios={scenarioSummaries} />
           </SectionCard>
 
-          <SectionCard title="Scenario list" subtitle="Create, select, duplicate, and delete lender comparisons backed by UserData.scenarios.">
+          <SectionCard
+            title="Scenario list"
+            subtitle="Create and manage deal setups before sending them to the lenders directory for product comparison."
+          >
             {hasScenarios ? (
               <div className="space-y-3">
                 <button
@@ -276,12 +294,16 @@ export default function ScenariosPage() {
                   className="w-full rounded-full bg-primary px-4 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white"
                   onClick={handleCreateStarterScenario}
                 >
-                  Add scenario
+                  Add deal scenario
                 </button>
 
                 {userData.scenarios.map((scenario) => {
                   const isSelected = scenario.id === selectedScenarioId;
                   const summary = scenarioSummaryMap.get(scenario.id);
+                  const purchaseBank = availableBanks.find((candidate) => candidate.id === scenario.bankId);
+                  const purchaseProduct = purchaseBank?.products.find((candidate) => candidate.id === scenario.productId);
+                  const equityBank = availableBanks.find((candidate) => candidate.id === scenario.equityBankId);
+                  const equityProduct = equityBank?.products.find((candidate) => candidate.id === scenario.equityProductId);
 
                   return (
                     <article
@@ -295,7 +317,12 @@ export default function ScenariosPage() {
                         <div className="min-w-0">
                           <p className="font-semibold text-ink">{scenario.label}</p>
                           <p className="mt-1 text-xs uppercase tracking-[0.18em] text-muted">
-                            {scenario.bankId && scenario.productId ? "Configured scenario" : "Profile default scenario"}
+                            Purchase: {purchaseBank?.shortName ?? purchaseBank?.name ?? "No lender"} · {purchaseProduct?.name ?? "No product selected"}
+                          </p>
+                          <p className="mt-1 text-xs uppercase tracking-[0.18em] text-muted">
+                            {scenario.propertyTreatment === "sell-and-use-cash"
+                              ? "Existing property sold for cash"
+                              : `Equity: ${equityBank?.shortName ?? equityBank?.name ?? "No lender"} · ${equityProduct?.name ?? "No product selected"}`}
                           </p>
                         </div>
                         {isSelected ? (
@@ -306,8 +333,9 @@ export default function ScenariosPage() {
                       </div>
 
                       <div className="mt-3 space-y-1 text-muted">
-                        <p>{summary ? `Borrowing power ${formatScenarioCurrency(summary.borrowingPower)}` : "Comparison output unavailable"}</p>
-                        <p>{summary ? `Repayment ${formatScenarioCurrency(summary.monthlyRepayment)} per month` : "Check lender and product settings."}</p>
+                        <p>Target property {formatOptionalCurrency(summary?.targetPropertyValue)}</p>
+                        <p>Total debt {formatOptionalCurrency(summary?.requiredLoanAmount)}</p>
+                        <p>Capacity gap {formatGapCurrency(summary?.borrowingGap)}</p>
                       </div>
 
                       <div className="mt-4 flex flex-wrap gap-2">
@@ -339,16 +367,16 @@ export default function ScenariosPage() {
               </div>
             ) : (
               <div className="rounded-[1.5rem] border border-dashed border-outline bg-surface-low px-5 py-6 text-sm text-muted">
-                <p className="font-semibold text-ink">No saved scenarios yet</p>
+                <p className="font-semibold text-ink">No deal scenarios yet</p>
                 <p className="mt-2 leading-6">
-                  Create a starter scenario to begin comparing lenders, products, and override settings against the current household profile.
+                  Start with a deal setup so the app knows what property value, deposit, equity release, refinanced debt, and offset position it should compare lenders against.
                 </p>
                 <button
                   type="button"
                   className="mt-4 rounded-full bg-primary px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-white"
                   onClick={handleCreateStarterScenario}
                 >
-                  Create starter scenario
+                  Create first scenario
                 </button>
               </div>
             )}
@@ -356,8 +384,8 @@ export default function ScenariosPage() {
         </div>
 
         <SectionCard
-          title={selectedScenario ? `Editing ${selectedScenario.label}` : "Scenario settings"}
-          subtitle="Choose a lender and product, then override rate, buffer, term, notes, and scenario copy as needed."
+          title={selectedScenario ? `Deal setup for ${selectedScenario.label}` : "Deal setup"}
+          subtitle="Set the target property, funding mix, existing debt treatment, and offset position here before comparing lenders."
         >
           {selectedScenario ? (
             <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
@@ -378,35 +406,212 @@ export default function ScenariosPage() {
                 </label>
 
                 <label className="block text-sm font-medium text-ink">
-                  <span>Lender</span>
-                  <select
-                    value={selectedScenario.bankId ?? ""}
-                    onChange={(event) => handleBankChange(selectedScenario.id, event.target.value)}
-                    className={fieldClassName()}
-                  >
-                    {availableBanks.map((bank) => (
-                      <option key={bank.id} value={bank.id}>
-                        {bank.name}
-                      </option>
-                    ))}
-                  </select>
+                  <span>Target property value</span>
+                  <input
+                    type="number"
+                    min="0"
+                    step="1000"
+                    value={selectedScenario.targetPropertyValue ?? ""}
+                    onChange={(event) =>
+                      updateScenario(selectedScenario.id, (scenario) => ({
+                        ...scenario,
+                        targetPropertyValue: parseOptionalNumberInput(event.target.value),
+                      }))
+                    }
+                    className={fieldClassName(
+                      selectedScenario.targetPropertyValue !== undefined && selectedScenario.targetPropertyValue < 0,
+                    )}
+                    placeholder="1250000"
+                  />
+                  <p className="mt-2 text-xs text-muted">Set the purchase or refinance target this scenario needs to fund.</p>
+                </label>
+
+                <label className="block text-sm font-medium text-ink md:col-span-2">
+                  <span>Current property treatment</span>
+                  <div className="mt-2 grid gap-3 md:grid-cols-2">
+                    <button
+                      type="button"
+                      className={[
+                        "rounded-[1.5rem] border px-4 py-4 text-left text-sm transition-colors",
+                        (selectedScenario.propertyTreatment ?? "equity-release") === "equity-release"
+                          ? "border-primary bg-blue-50/70"
+                          : "border-outline bg-white",
+                      ].join(" ")}
+                      onClick={() =>
+                        updateScenario(selectedScenario.id, (scenario) => ({
+                          ...scenario,
+                          propertyTreatment: "equity-release",
+                          refinanceExistingLoanAmount:
+                            scenario.refinanceExistingLoanAmount ?? Math.round(selectedSummary?.currentHomeLoanBalance ?? 0),
+                        }))
+                      }
+                    >
+                      <p className="font-semibold text-ink">Keep property and use equity</p>
+                      <p className="mt-2 text-xs leading-5 text-muted">
+                        Borrow against the current property up to 80% LVR and optionally refinance the existing home loan into the new structure.
+                      </p>
+                    </button>
+                    <button
+                      type="button"
+                      className={[
+                        "rounded-[1.5rem] border px-4 py-4 text-left text-sm transition-colors",
+                        selectedScenario.propertyTreatment === "sell-and-use-cash"
+                          ? "border-primary bg-blue-50/70"
+                          : "border-outline bg-white",
+                      ].join(" ")}
+                      onClick={() =>
+                        updateScenario(selectedScenario.id, (scenario) => ({
+                          ...scenario,
+                          propertyTreatment: "sell-and-use-cash",
+                          equityReleaseAmount: 0,
+                          refinanceExistingLoanAmount: 0,
+                        }))
+                      }
+                    >
+                      <p className="font-semibold text-ink">Sell property and use cash</p>
+                      <p className="mt-2 text-xs leading-5 text-muted">
+                        Treat the current property as sold, clear the existing home loan, and add the net sale proceeds to the cash contribution automatically.
+                      </p>
+                    </button>
+                  </div>
                 </label>
 
                 <label className="block text-sm font-medium text-ink">
-                  <span>Product</span>
-                  <select
-                    value={selectedScenario.productId ?? ""}
-                    onChange={(event) => handleProductChange(selectedScenario.id, selectedScenario.bankId ?? "", event.target.value)}
-                    className={fieldClassName()}
-                    disabled={!selectedBank}
-                  >
-                    {selectedBank?.products.map((product) => (
-                      <option key={product.id} value={product.id}>
-                        {product.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                    <span>{selectedScenario.propertyTreatment === "sell-and-use-cash" ? "Extra cash contribution" : "Cash contribution"}</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="1000"
+                      value={selectedScenario.cashContribution ?? ""}
+                      onChange={(event) =>
+                        updateScenario(selectedScenario.id, (scenario) => ({
+                          ...scenario,
+                          cashContribution: parseOptionalNumberInput(event.target.value),
+                        }))
+                      }
+                      className={fieldClassName(selectedScenario.cashContribution !== undefined && selectedScenario.cashContribution < 0)}
+                      placeholder={String(Math.round(selectedSummary?.availableCash ?? 0))}
+                    />
+                    <p className="mt-2 text-xs text-muted">
+                      {selectedScenario.propertyTreatment === "sell-and-use-cash"
+                        ? `Recorded cash assets ${formatScenarioCurrency(selectedSummary?.availableCash ?? 0)} plus property sale proceeds are used. This field is for any additional cash you want to contribute.`
+                        : `Recorded cash assets ${formatScenarioCurrency(selectedSummary?.availableCash ?? 0)}. This does not cap the scenario amount.`}
+                    </p>
+                  </label>
+
+                  {selectedScenario.propertyTreatment === "sell-and-use-cash" ? (
+                    <div className="rounded-[1.5rem] border border-outline bg-surface-low px-4 py-4 text-sm text-muted">
+                      <p className="font-semibold text-ink">Property sale treatment</p>
+                      <p className="mt-2 leading-6">
+                        Net sale proceeds {formatOptionalCurrency(selectedSummary?.propertySaleProceeds)} are added to cash contribution automatically. Existing home loan refinance and equity release are both set to $0 in this mode.
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <label className="block text-sm font-medium text-ink">
+                        <span>Equity release amount</span>
+                        <input
+                          type="number"
+                          min="0"
+                          step="1000"
+                          value={selectedScenario.equityReleaseAmount ?? ""}
+                          onChange={(event) =>
+                            updateScenario(selectedScenario.id, (scenario) => ({
+                              ...scenario,
+                              equityReleaseAmount: parseOptionalNumberInput(event.target.value),
+                            }))
+                          }
+                          className={fieldClassName(
+                            selectedScenario.equityReleaseAmount !== undefined && selectedScenario.equityReleaseAmount < 0,
+                          )}
+                          placeholder={String(Math.round(selectedSummary?.availableEquity ?? 0))}
+                        />
+                        <p className="mt-2 text-xs text-muted">
+                          Borrowed against the existing property up to 80% LVR of total property value {formatScenarioCurrency(selectedSummary?.existingPropertyValue ?? 0)}. Available equity {formatScenarioCurrency(selectedSummary?.availableEquity ?? 0)}.
+                        </p>
+                      </label>
+
+                      <label className="block text-sm font-medium text-ink">
+                        <span>Existing loan to refinance</span>
+                        <input
+                          type="number"
+                          min="0"
+                          step="1000"
+                          value={selectedScenario.refinanceExistingLoanAmount ?? ""}
+                          onChange={(event) =>
+                            updateScenario(selectedScenario.id, (scenario) => ({
+                              ...scenario,
+                              refinanceExistingLoanAmount: parseOptionalNumberInput(event.target.value),
+                            }))
+                          }
+                          className={fieldClassName(
+                            selectedScenario.refinanceExistingLoanAmount !== undefined &&
+                              selectedScenario.refinanceExistingLoanAmount < 0,
+                          )}
+                          placeholder={String(Math.round(selectedSummary?.currentHomeLoanBalance ?? 0))}
+                        />
+                        <p className="mt-2 text-xs text-muted">
+                          Current home loan balance {formatScenarioCurrency(selectedSummary?.currentHomeLoanBalance ?? 0)}. Set to 0 if it will be cleared outside this structure.
+                        </p>
+                      </label>
+                    </>
+                  )}
+
+                <div className="rounded-[1.5rem] border border-outline bg-surface-low px-4 py-4 md:col-span-2">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-medium text-ink">Offset account</p>
+                      <p className="mt-2 text-xs leading-5 text-muted">
+                        Enable this only if the scenario plans to keep cash parked in offset rather than contributing it directly to the deal.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      className={[
+                        "rounded-full border px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] transition-colors",
+                        selectedScenario.hasOffsetAccount
+                          ? "border-primary bg-primary text-white"
+                          : "border-outline bg-white text-muted",
+                      ].join(" ")}
+                      onClick={() =>
+                        updateScenario(selectedScenario.id, (scenario) => ({
+                          ...scenario,
+                          hasOffsetAccount: !(scenario.hasOffsetAccount ?? false),
+                        }))
+                      }
+                    >
+                      {selectedScenario.hasOffsetAccount ? "Offset enabled" : "Enable offset"}
+                    </button>
+                  </div>
+
+                  {selectedScenario.hasOffsetAccount ? (
+                    <label className="mt-4 block text-sm font-medium text-ink">
+                      <span>Planned offset balance</span>
+                      <input
+                        type="number"
+                        min="0"
+                        step="1000"
+                        value={selectedScenario.offsetBalance ?? ""}
+                        onChange={(event) =>
+                          updateScenario(selectedScenario.id, (scenario) => ({
+                            ...scenario,
+                            offsetBalance: parseOptionalNumberInput(event.target.value),
+                          }))
+                        }
+                        className={fieldClassName(selectedScenario.offsetBalance !== undefined && selectedScenario.offsetBalance < 0)}
+                        placeholder="0"
+                      />
+                      <p className="mt-2 text-xs text-muted">
+                        Keep part of your cash in offset instead of putting it all into the deal.
+                      </p>
+                    </label>
+                  ) : (
+                    <p className="mt-4 text-xs leading-5 text-muted">
+                      Offset is currently excluded from this scenario, so all available cash is treated as regular cash contribution unless you set it elsewhere.
+                    </p>
+                  )}
+                </div>
 
                 <label className="block text-sm font-medium text-ink">
                   <span>Notes</span>
@@ -506,15 +711,83 @@ export default function ScenariosPage() {
 
               <div className="space-y-4">
                 <div className="rounded-[1.5rem] bg-surface-low p-5 text-sm text-muted">
+                  <p className="font-semibold text-ink">Funding snapshot</p>
+                  <div className="mt-4 space-y-2">
+                    <p>
+                      <span className="text-ink">Target property:</span> {formatOptionalCurrency(selectedSummary?.targetPropertyValue)}
+                    </p>
+                    <p>
+                      <span className="text-ink">Cash contribution:</span> {formatOptionalCurrency(selectedSummary?.cashContribution)}
+                    </p>
+                    <p>
+                      <span className="text-ink">Entered cash:</span> {formatOptionalCurrency(selectedSummary?.enteredCashContribution)}
+                    </p>
+                    <p>
+                      <span className="text-ink">Property sale proceeds:</span> {formatOptionalCurrency(selectedSummary?.propertySaleProceeds)}
+                    </p>
+                    <p>
+                      <span className="text-ink">Available equity:</span> {formatOptionalCurrency(selectedSummary?.availableEquity)}
+                    </p>
+                    <p>
+                      <span className="text-ink">Equity release:</span> {formatOptionalCurrency(selectedSummary?.equityReleaseAmount)}
+                    </p>
+                    <p>
+                      <span className="text-ink">Existing debt refinanced:</span> {formatOptionalCurrency(selectedSummary?.refinanceExistingLoanAmount)}
+                    </p>
+                    <p>
+                      <span className="text-ink">Purchase loan:</span> {formatOptionalCurrency(selectedSummary?.purchaseLoanAmount)}
+                    </p>
+                    <p>
+                      <span className="text-ink">Planned offset:</span> {formatOptionalCurrency(selectedSummary?.plannedOffsetBalance)}
+                    </p>
+                    <p>
+                      <span className="text-ink">Total debt:</span> {formatOptionalCurrency(selectedSummary?.requiredLoanAmount)}
+                    </p>
+                  </div>
+                  <Link
+                    href="/lenders"
+                    className="mt-4 inline-flex rounded-full border border-outline bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-muted"
+                  >
+                    Compare lenders for this deal
+                  </Link>
+                </div>
+
+                <div className="rounded-[1.5rem] bg-surface-low p-5 text-sm text-muted">
                   <p className="font-semibold text-ink">Selected scenario output</p>
                   <div className="mt-4 space-y-2">
+                    <p>
+                      <span className="text-ink">Property treatment:</span>{" "}
+                      {selectedSummary?.propertyTreatment === "sell-and-use-cash" ? "Sell and use cash" : "Keep and use equity"}
+                    </p>
+                    <p>
+                      <span className="text-ink">Total debt:</span>{" "}
+                      {formatOptionalCurrency(selectedSummary?.requiredLoanAmount)}
+                    </p>
+                    <p>
+                      <span className="text-ink">Purchase loan:</span> {formatOptionalCurrency(selectedSummary?.purchaseLoanAmount)}
+                    </p>
+                    <p>
+                      <span className="text-ink">Product fit:</span> {formatEligibility(selectedSummary)}
+                    </p>
+                    <p>
+                      <span className="text-ink">Purchase LVR:</span> {formatOptionalPercentage(selectedSummary?.purchaseLvr)}
+                    </p>
+                    <p>
+                      <span className="text-ink">Existing property LVR:</span> {formatOptionalPercentage(selectedSummary?.existingPropertyLvr)}
+                    </p>
                     <p>
                       <span className="text-ink">Borrowing power:</span>{" "}
                       {selectedSummary ? formatScenarioCurrency(selectedSummary.borrowingPower) : "Unavailable"}
                     </p>
                     <p>
+                      <span className="text-ink">Capacity gap:</span> {formatGapCurrency(selectedSummary?.borrowingGap)}
+                    </p>
+                    <p>
                       <span className="text-ink">Monthly repayment:</span>{" "}
                       {selectedSummary ? `${formatScenarioCurrency(selectedSummary.monthlyRepayment)} per month` : "Unavailable"}
+                    </p>
+                    <p>
+                      <span className="text-ink">Effective offset:</span> {formatOptionalCurrency(selectedSummary?.effectiveOffsetBalance)}
                     </p>
                     <p>
                       <span className="text-ink">Effective rate:</span> {selectedEffectiveValues?.targetInterestRate.toFixed(2)}%
@@ -525,38 +798,54 @@ export default function ScenariosPage() {
                     <p>
                       <span className="text-ink">Effective loan term:</span> {selectedEffectiveValues?.loanTermYears} years
                     </p>
+                    {selectedSummary?.eligibilityIssues?.length ? (
+                      <div className="rounded-2xl border border-warning/30 bg-white px-3 py-3 text-xs leading-5 text-warning">
+                        {selectedSummary.eligibilityIssues.map((issue) => (
+                          <p key={issue}>{issue}</p>
+                        ))}
+                      </div>
+                    ) : null}
                   </div>
                 </div>
 
                 <div className="rounded-[1.5rem] bg-surface-low p-5 text-sm text-muted">
-                  <p className="font-semibold text-ink">Resolved product details</p>
-                  <div className="mt-4 space-y-2">
-                    <p>
-                      <span className="text-ink">Lender:</span> {selectedBank?.name ?? "Using profile defaults"}
-                    </p>
-                    <p>
-                      <span className="text-ink">Product:</span> {selectedProduct?.name ?? "No product selected"}
-                    </p>
-                    <p>
-                      <span className="text-ink">Comparison rate:</span>{" "}
-                      {selectedProduct?.comparisonRate ? `${selectedProduct.comparisonRate.toFixed(2)}%` : "Not listed"}
-                    </p>
-                    <p>
-                      <span className="text-ink">Max LVR:</span> {selectedProduct?.maxLvr ? `${selectedProduct.maxLvr}%` : "Not listed"}
-                    </p>
-                    <p>
-                      <span className="text-ink">Features:</span>{" "}
-                      {selectedProduct
-                        ? [
-                            selectedProduct.features.offset ? "Offset" : null,
-                            selectedProduct.features.redraw ? "Redraw" : null,
-                            selectedProduct.features.extraRepayments ? "Extra repayments" : null,
-                            selectedProduct.features.portability ? "Portability" : null,
-                          ]
-                            .filter(Boolean)
-                            .join(", ")
-                        : "No product features available"}
-                    </p>
+                  <p className="font-semibold text-ink">Resolved facility details</p>
+                  <div className="mt-4 space-y-4">
+                    <div>
+                      <p className="font-semibold text-ink">Purchase facility</p>
+                      <div className="mt-2 space-y-2">
+                        <p>
+                          <span className="text-ink">Product:</span> {selectedProduct?.name ?? "No product selected"}
+                        </p>
+                        <p>
+                          <span className="text-ink">Comparison rate:</span>{" "}
+                          {selectedProduct?.comparisonRate ? `${selectedProduct.comparisonRate.toFixed(2)}%` : "Not listed"}
+                        </p>
+                        <p>
+                          <span className="text-ink">Max LVR:</span> {selectedProduct?.maxLvr ? `${selectedProduct.maxLvr}%` : "Not listed"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="font-semibold text-ink">Equity facility</p>
+                      {selectedScenario?.propertyTreatment === "sell-and-use-cash" ? (
+                        <p className="mt-2">Not required when the existing property is sold for cash.</p>
+                      ) : (
+                        <div className="mt-2 space-y-2">
+                          <p>
+                            <span className="text-ink">Product:</span> {selectedEquityProduct?.name ?? "No product selected"}
+                          </p>
+                          <p>
+                            <span className="text-ink">Comparison rate:</span>{" "}
+                            {selectedEquityProduct?.comparisonRate ? `${selectedEquityProduct.comparisonRate.toFixed(2)}%` : "Not listed"}
+                          </p>
+                          <p>
+                            <span className="text-ink">Max LVR:</span> {selectedEquityProduct?.maxLvr ? `${selectedEquityProduct.maxLvr}%` : "Not listed"}
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -564,7 +853,14 @@ export default function ScenariosPage() {
           ) : (
             <div className="rounded-[1.5rem] border border-dashed border-outline bg-surface-low px-5 py-6 text-sm text-muted">
               <p className="font-semibold text-ink">No scenario selected</p>
-              <p className="mt-2 leading-6">Add a scenario to start editing lender selections and per-scenario overrides.</p>
+              <p className="mt-2 leading-6">Create a deal scenario first so the app can compare lenders against something concrete.</p>
+              <button
+                type="button"
+                className="mt-4 rounded-full bg-primary px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-white"
+                onClick={handleCreateStarterScenario}
+              >
+                Create scenario
+              </button>
             </div>
           )}
         </SectionCard>
@@ -588,6 +884,14 @@ export default function ScenariosPage() {
                       <div className="mt-3 space-y-1">
                         <p>Lender: {bank?.shortName ?? bank?.name ?? "Profile default"}</p>
                         <p>Product: {product?.name ?? "No product selected"}</p>
+                        <p>Target property: {formatOptionalCurrency(scenario.targetPropertyValue)}</p>
+                        <p>Purchase loan: {formatOptionalCurrency(summary?.purchaseLoanAmount)}</p>
+                        <p>Total debt: {formatOptionalCurrency(summary?.requiredLoanAmount)}</p>
+                        <p>Product fit: {formatEligibility(summary)}</p>
+                        <p>Purchase LVR: {formatOptionalPercentage(summary?.purchaseLvr)}</p>
+                        <p>Existing property LVR: {formatOptionalPercentage(summary?.existingPropertyLvr)}</p>
+                        <p>Gap: {formatGapCurrency(summary?.borrowingGap)}</p>
+                        <p>Offset: {formatOptionalCurrency(summary?.effectiveOffsetBalance)}</p>
                         <p>Rate: {effectiveValues.targetInterestRate.toFixed(2)}%</p>
                         <p>Buffer: {effectiveValues.assessmentBuffer.toFixed(2)}%</p>
                         <p>Term: {effectiveValues.loanTermYears} years</p>
@@ -606,6 +910,11 @@ export default function ScenariosPage() {
                       <th className="px-4 text-xs font-bold uppercase tracking-[0.18em] text-muted">Scenario</th>
                       <th className="px-4 text-xs font-bold uppercase tracking-[0.18em] text-muted">Lender</th>
                       <th className="px-4 text-xs font-bold uppercase tracking-[0.18em] text-muted">Product</th>
+                      <th className="px-4 text-xs font-bold uppercase tracking-[0.18em] text-muted">Target property</th>
+                      <th className="px-4 text-xs font-bold uppercase tracking-[0.18em] text-muted">Total debt</th>
+                      <th className="px-4 text-xs font-bold uppercase tracking-[0.18em] text-muted">Fit</th>
+                      <th className="px-4 text-xs font-bold uppercase tracking-[0.18em] text-muted">Gap</th>
+                      <th className="px-4 text-xs font-bold uppercase tracking-[0.18em] text-muted">Offset</th>
                       <th className="px-4 text-xs font-bold uppercase tracking-[0.18em] text-muted">Rate</th>
                       <th className="px-4 text-xs font-bold uppercase tracking-[0.18em] text-muted">Buffer</th>
                       <th className="px-4 text-xs font-bold uppercase tracking-[0.18em] text-muted">Term</th>
@@ -625,6 +934,11 @@ export default function ScenariosPage() {
                           <td className="rounded-l-[1.5rem] px-4 py-4 font-semibold text-ink">{scenario.label}</td>
                           <td className="px-4 py-4">{bank?.shortName ?? bank?.name ?? "Profile default"}</td>
                           <td className="px-4 py-4">{product?.name ?? "No product selected"}</td>
+                          <td className="px-4 py-4">{formatOptionalCurrency(scenario.targetPropertyValue)}</td>
+                          <td className="px-4 py-4">{formatOptionalCurrency(summary?.requiredLoanAmount)}</td>
+                          <td className="px-4 py-4">{formatEligibility(summary)}</td>
+                          <td className="px-4 py-4">{formatGapCurrency(summary?.borrowingGap)}</td>
+                          <td className="px-4 py-4">{formatOptionalCurrency(summary?.effectiveOffsetBalance)}</td>
                           <td className="px-4 py-4">{effectiveValues.targetInterestRate.toFixed(2)}%</td>
                           <td className="px-4 py-4">{effectiveValues.assessmentBuffer.toFixed(2)}%</td>
                           <td className="px-4 py-4">{effectiveValues.loanTermYears} years</td>
@@ -642,7 +956,7 @@ export default function ScenariosPage() {
           ) : (
             <div className="rounded-[1.5rem] border border-dashed border-outline bg-surface-low px-5 py-6 text-sm text-muted">
               <p className="font-semibold text-ink">No comparison rows yet</p>
-              <p className="mt-2 leading-6">Scenario rows will appear here as soon as at least one scenario has been created.</p>
+              <p className="mt-2 leading-6">Scenario rows will appear here as soon as products have been selected in Lenders & Products.</p>
             </div>
           )}
         </SectionCard>

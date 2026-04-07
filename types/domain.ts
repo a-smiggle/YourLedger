@@ -77,7 +77,7 @@ export type AssetProjection = {
   currentValue: number;
   projectedMonthlyContribution: number;
   annualGrowthRate: number;
-  projected12MonthValue: number;
+  projectedHorizonValue: number;
   suggestedContributionLabel: string;
 };
 
@@ -89,6 +89,7 @@ export type AssetProjectionPoint = {
 };
 
 export type AssetProjectionSummary = {
+  horizonMonths: number;
   assumptions: ProjectionAssumptions;
   afterTaxMonthlyIncome: number;
   monthlyDeclaredExpenses: number;
@@ -98,11 +99,86 @@ export type AssetProjectionSummary = {
   timeline: AssetProjectionPoint[];
 };
 
+export type ScenarioProjectionPoint = {
+  monthLabel: string;
+  totalDebtBalance: number;
+  purchaseDebtBalance: number;
+  existingPropertyDebtBalance: number;
+  offsetBalance: number;
+  cumulativeInterestPaid: number;
+  cumulativeInterestSaved: number;
+  liquidWealth: number;
+  propertyEquity: number;
+  retainedPropertyEquity: number;
+  totalWealth: number;
+};
+
+export type ScenarioProjectionSummary = {
+  scenarioId?: string;
+  label: string;
+  horizonMonths: number;
+  monthlyAfterTaxIncome: number;
+  monthlyDeclaredExpenses: number;
+  monthlyOtherLiabilities: number;
+  monthlyScenarioRepayment: number;
+  monthlySurplusAfterScenarioRepayments: number;
+  openingTotalWealth: number;
+  projectedDebtBalance: number;
+  projectedDebtReduction: number;
+  projectedInterestPaid: number;
+  projectedInterestSaved: number;
+  projectedOffsetBalance: number;
+  projectedWealth: number;
+  timeline: ScenarioProjectionPoint[];
+};
+
+export type ScenarioSensitivityPoint = {
+  rateAdjustmentPercent: number;
+  scenarioRateLabel: string;
+  monthlyScenarioRepayment: number;
+  projectedDebtBalance: number;
+  projectedInterestPaid: number;
+  projectedInterestSaved: number;
+  projectedWealth: number;
+};
+
+export type ScenarioSensitivitySummary = {
+  scenarioId?: string;
+  label: string;
+  horizonMonths: number;
+  points: ScenarioSensitivityPoint[];
+};
+
 export type ScenarioSummary = {
   id?: string;
   label: string;
   borrowingPower: number;
   monthlyRepayment: number;
+  propertyTreatment?: UserScenario["propertyTreatment"];
+  targetPropertyValue?: number;
+  existingPropertyValue?: number;
+  requiredLoanAmount?: number;
+  purchaseLoanAmount?: number;
+  enteredCashContribution?: number;
+  cashContribution?: number;
+  propertySaleProceeds?: number;
+  availableEquity?: number;
+  equityReleaseAmount?: number;
+  refinanceExistingLoanAmount?: number;
+  currentEquity?: number;
+  currentHomeLoanBalance?: number;
+  availableCash?: number;
+  purchaseLvr?: number;
+  existingPropertyLvr?: number;
+  combinedLvr?: number;
+  maxSupportedLvr?: number;
+  plannedOffsetBalance?: number;
+  effectiveOffsetBalance?: number;
+  borrowingGap?: number;
+  repaymentLoanAmount?: number;
+  isProductEligible?: boolean;
+  eligibilityIssues?: string[];
+  withinCapacity?: boolean;
 };
 
 export type StoreSource = "seed" | "local" | "imported" | "manual";
@@ -120,6 +196,17 @@ export type UserScenario = {
   description?: string;
   bankId?: string;
   productId?: string;
+  equityBankId?: string;
+  equityProductId?: string;
+  productUsage?: string;
+  propertyTreatment?: "equity-release" | "sell-and-use-cash";
+  targetPropertyValue?: number;
+  cashContribution?: number;
+  hasOffsetAccount?: boolean;
+  equityReleaseAmount?: number;
+  refinanceExistingLoanAmount?: number;
+  equityContribution?: number;
+  offsetBalance?: number;
   targetInterestRate?: number;
   assessmentBuffer?: number;
   loanTermYears?: number;

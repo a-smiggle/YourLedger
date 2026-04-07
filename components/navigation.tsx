@@ -8,8 +8,8 @@ const routes = [
   { href: "/income-expenses", label: "Income & Expenses" },
   { href: "/assets-liabilities", label: "Assets & Liabilities" },
   { href: "/scenarios", label: "Scenarios" },
-  { href: "/results", label: "Results" },
   { href: "/lenders", label: "Lenders" },
+  { href: "/results", label: "Results" },
 ];
 
 type NavigationProps = {

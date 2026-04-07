@@ -28,8 +28,16 @@ function calculateBaseMonthlySuperContribution(annualGrossIncome: number, superC
   return Math.round(annualGrossIncome * (superContributionRate / 100) / 12);
 }
 
+function sumCurrentHomeLoanBalance(userData: UserData) {
+  return userData.profile.liabilities.reduce(
+    (total, liability) => (liability.category === "home-loan" ? total + liability.balance : total),
+    0,
+  );
+}
+
 function normalizeUserData(userData: UserData): UserData {
   const assetReadingDate = fallbackReadingDate(userData.meta.updatedAt);
+  const currentHomeLoanBalance = sumCurrentHomeLoanBalance(userData);
   const members = userData.profile.members.map((member, index) => ({
     ...demoUserData.profile.members[index],
     ...member,
@@ -66,6 +74,10 @@ function normalizeUserData(userData: UserData): UserData {
 
   return {
     ...userData,
+    meta: {
+      ...userData.meta,
+      schemaVersion: Math.max(userData.meta.schemaVersion ?? 1, 5),
+    },
     profile: {
       ...demoUserData.profile,
       ...userData.profile,
@@ -76,6 +88,19 @@ function normalizeUserData(userData: UserData): UserData {
       },
       assets,
     },
+    scenarios: userData.scenarios.map((scenario) => ({
+      ...scenario,
+      propertyTreatment: scenario.propertyTreatment ?? "equity-release",
+      hasOffsetAccount: scenario.hasOffsetAccount ?? Boolean((scenario.offsetBalance ?? 0) > 0),
+      equityReleaseAmount: scenario.equityReleaseAmount ?? scenario.equityContribution,
+      refinanceExistingLoanAmount: scenario.refinanceExistingLoanAmount ?? currentHomeLoanBalance,
+      equityBankId:
+        scenario.equityBankId ??
+        ((scenario.propertyTreatment ?? "equity-release") === "equity-release" ? scenario.bankId : undefined),
+      equityProductId:
+        scenario.equityProductId ??
+        ((scenario.propertyTreatment ?? "equity-release") === "equity-release" ? scenario.productId : undefined),
+    })),
   };
 }
 

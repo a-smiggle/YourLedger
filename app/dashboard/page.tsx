@@ -83,12 +83,12 @@ export default function DashboardPage() {
             </div>
           </SectionCard>
 
-          <SectionCard title="App structure" subtitle="Scaffolded route map from the stitch examples.">
+          <SectionCard title="Primary workflow" subtitle="The core planning path is now explicit across desktop and mobile navigation.">
             <ul className="space-y-3 text-sm text-muted">
-              <li>Dashboard shell and primary metrics</li>
-              <li>Income, assets, results, scenarios, lenders, about, and how-it-works routes</li>
-              <li>Pure TypeScript lending engine separated from React</li>
-              <li>Local storage hook ready for persisted state wiring</li>
+              <li>Step 1: capture household income, bonus, rental income, and expenses</li>
+              <li>Step 2: confirm assets, liabilities, and current repayments</li>
+              <li>Step 3: define the property target, deposit, equity contribution, and offset plan</li>
+              <li>Step 4: shortlist lenders and products against the actual deal brief before reading results</li>
             </ul>
           </SectionCard>
         </div>
