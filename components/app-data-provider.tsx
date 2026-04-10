@@ -4,11 +4,22 @@ import { createContext, useContext } from "react";
 import type { Dispatch, SetStateAction } from "react";
 
 import { useLocalStorage } from "@/hooks/use-local-storage";
+import {
+  BANK_DATA_STORAGE_KEY,
+  USER_DATA_STORAGE_KEY,
+  cloneDefaultBankData,
+  cloneDefaultUserData,
+  createAppStateExport,
+  getStorageRecoveryNotice,
+  parseAppStateExport,
+  parseStoredBankData,
+  parseStoredUserData,
+  stampImportedBankData,
+  stampImportedUserData,
+  type StorageRecoveryNotice,
+} from "@/modules/app-data-management";
 import { demoBankData, demoUserData } from "@/modules/demo-data";
 import type { BankData, UserData } from "@/types/domain";
-
-const USER_DATA_STORAGE_KEY = "your-ledger:user-data";
-const BANK_DATA_STORAGE_KEY = "your-ledger:bank-data";
 
 type AppDataContextValue = {
   userData: UserData;
@@ -16,6 +27,11 @@ type AppDataContextValue = {
   bankData: BankData;
   setBankData: Dispatch<SetStateAction<BankData>>;
   isHydrated: boolean;
+  storageRecoveryNotices: StorageRecoveryNotice[];
+  exportAppState: () => string;
+  importAppState: (jsonText: string) => void;
+  resetAppData: () => void;
+  clearLocalData: () => void;
 };
 
 const AppDataContext = createContext<AppDataContextValue | null>(null);
@@ -105,9 +121,46 @@ function normalizeUserData(userData: UserData): UserData {
 }
 
 export function AppDataProvider({ children }: Readonly<{ children: React.ReactNode }>) {
-  const [storedUserData, setUserData, isUserDataLoaded] = useLocalStorage<UserData>(USER_DATA_STORAGE_KEY, demoUserData);
-  const [bankData, setBankData, isBankDataLoaded] = useLocalStorage<BankData>(BANK_DATA_STORAGE_KEY, demoBankData);
+  const [storedUserData, setUserData, isUserDataLoaded, userStorageRecovery] = useLocalStorage<UserData>(
+    USER_DATA_STORAGE_KEY,
+    demoUserData,
+    {
+      deserialize: parseStoredUserData,
+      getRecoveryNotice: getStorageRecoveryNotice,
+    },
+  );
+  const [bankData, setBankData, isBankDataLoaded, bankStorageRecovery] = useLocalStorage<BankData>(
+    BANK_DATA_STORAGE_KEY,
+    demoBankData,
+    {
+      deserialize: parseStoredBankData,
+      getRecoveryNotice: getStorageRecoveryNotice,
+    },
+  );
   const userData = normalizeUserData(storedUserData);
+  const storageRecoveryNotices = [userStorageRecovery, bankStorageRecovery].filter(Boolean) as StorageRecoveryNotice[];
+
+  const exportAppState = () => createAppStateExport(userData, bankData);
+
+  const importAppState = (jsonText: string) => {
+    const importedBundle = parseAppStateExport(jsonText);
+    setUserData(stampImportedUserData(importedBundle.userData));
+    setBankData(stampImportedBankData(importedBundle.bankData));
+  };
+
+  const resetAppData = () => {
+    setUserData(cloneDefaultUserData());
+    setBankData(cloneDefaultBankData());
+  };
+
+  const clearLocalData = () => {
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(USER_DATA_STORAGE_KEY);
+      window.localStorage.removeItem(BANK_DATA_STORAGE_KEY);
+    }
+
+    resetAppData();
+  };
 
   return (
     <AppDataContext.Provider
@@ -117,6 +170,11 @@ export function AppDataProvider({ children }: Readonly<{ children: React.ReactNo
         bankData,
         setBankData,
         isHydrated: isUserDataLoaded && isBankDataLoaded,
+        storageRecoveryNotices,
+        exportAppState,
+        importAppState,
+        resetAppData,
+        clearLocalData,
       }}
     >
       {children}

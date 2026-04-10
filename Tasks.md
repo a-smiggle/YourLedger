@@ -54,11 +54,11 @@
 
 ## Data Management
 
-- [ ] Add export of the full app state to JSON.
-- [ ] Add import of previously exported JSON with validation and schema checks.
-- [ ] Add reset and clear-data actions for local state.
-- [ ] Add storage migration handling for future schema versions.
-- [ ] Add recovery handling for corrupt or partial local storage payloads.
+- [x] Add export of the full app state to JSON.
+- [x] Add import of previously exported JSON with validation and schema checks.
+- [x] Add reset and clear-data actions for local state.
+- [x] Add storage migration handling for future schema versions.
+- [x] Add recovery handling for corrupt or partial local storage payloads.
 
 ## Privacy, Transparency, And Content
 

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -53,6 +54,12 @@ export function DashboardInfoActions() {
   return (
     <>
       <div className="space-y-2">
+        <Link
+          href="/data-management"
+          className="block w-full rounded-2xl px-4 py-3 text-center text-sm font-semibold text-ink transition hover:bg-white"
+        >
+          Data Management
+        </Link>
         <button
           type="button"
           className="w-full rounded-2xl px-4 py-3 text-center text-sm font-semibold text-ink transition hover:bg-white"
