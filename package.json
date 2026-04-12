@@ -8,24 +8,36 @@
     "prebuild": "node scripts/reset-next-cache.mjs",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "check:release": "pnpm lint && pnpm test && pnpm build && pnpm test:e2e"
   },
   "dependencies": {
-    "next": "15.5.6",
+    "next": "15.5.15",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "recharts": "2.15.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
+    "@playwright/test": "^1.59.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "22.14.1",
     "@types/react": "19.1.2",
     "@types/react-dom": "19.1.2",
+    "@vitejs/plugin-react": "^6.0.1",
     "autoprefixer": "10.4.21",
     "eslint": "9.24.0",
-    "eslint-config-next": "15.3.1",
+    "eslint-config-next": "15.5.15",
+    "jsdom": "^29.0.2",
     "postcss": "8.5.3",
     "tailwindcss": "3.4.17",
-    "typescript": "5.8.3"
+    "typescript": "5.8.3",
+    "vitest": "^4.1.4"
   }
 }

@@ -48,9 +48,9 @@ export function ScenarioComparisonChart({ data, series, valueFormatter, axisTick
             width={isCompact ? 42 : 60}
           />
           <Tooltip
-            formatter={(value: number | string | null, name: string) => {
+            formatter={(value, name) => {
               if (typeof value !== "number") {
-                return [value, labelMap[name] ?? name];
+                return [Array.isArray(value) ? value.join(", ") : value ?? "Not set", labelMap[name] ?? name];
               }
 
               return [formatValue(value), labelMap[name] ?? name];

@@ -35,13 +35,17 @@ export function ScenarioOutcomeChart({ points }: Readonly<{ points: ScenarioProj
             width={isCompact ? 42 : 60}
           />
           <Tooltip
-            formatter={(value: number, name: string) => {
+            formatter={(value, name) => {
               const labelMap: Record<string, string> = {
                 totalWealth: "Total wealth",
                 totalDebtBalance: "Total debt",
                 offsetBalance: "Offset balance",
                 cumulativeInterestSaved: "Interest saved",
               };
+
+              if (typeof value !== "number") {
+                return [Array.isArray(value) ? value.join(", ") : value ?? "Not set", labelMap[name] ?? name];
+              }
 
               return [`$${value.toLocaleString()}`, labelMap[name] ?? name];
             }}

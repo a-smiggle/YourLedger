@@ -155,3 +155,24 @@ Include a clear disclaimer:
   /config            # Banking rules & assumptions
   /hooks             # State & persistence hooks
   /types             # TypeScript domain models
+  ```
+
+  ## Development And Validation
+
+  - `pnpm dev` starts the Next.js app locally.
+  - `pnpm lint` runs ESLint across the app.
+  - `pnpm test` runs the Vitest unit and integration suite.
+  - `pnpm build` verifies the production build.
+  - `pnpm test:e2e` runs Playwright smoke coverage across desktop and mobile browser profiles.
+
+  ## Browser Coverage
+
+  Automated smoke coverage is configured for:
+
+  - Chromium
+  - Firefox
+  - WebKit
+  - Mobile Chrome (Pixel 7)
+  - Mobile Safari (iPhone 14)
+
+  The repeatable release checklist lives in `docs/pre-release-checklist.md`.

@@ -16,7 +16,7 @@ export function AssetProjectionChart({ points }: Readonly<{ points: AssetProject
           <CartesianGrid stroke="#e5e7eb" vertical={false} />
           <XAxis dataKey="monthLabel" stroke="#57657a" tickLine={false} axisLine={false} interval={getTimeSeriesXAxisInterval(points.length, isCompact)} tick={{ fontSize: isCompact ? 11 : 12 }} tickMargin={8} minTickGap={isCompact ? 20 : 12} />
           <YAxis stroke="#57657a" tickFormatter={(value) => `$${Math.round(value / 1000)}k`} tickLine={false} axisLine={false} tick={{ fontSize: isCompact ? 11 : 12 }} width={isCompact ? 42 : 60} />
-          <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, "Projected balance"]} />
+          <Tooltip formatter={(value) => [typeof value === "number" ? `$${value.toLocaleString()}` : String(value), "Projected balance"]} />
           <Legend iconSize={isCompact ? 10 : 14} wrapperStyle={{ fontSize: isCompact ? 11 : 12, paddingTop: 8 }} />
           <Line type="monotone" dataKey="totalProjectedAssets" stroke="#012169" strokeWidth={3} dot={false} name="Total assets" />
           <Line type="monotone" dataKey="totalProjectedCash" stroke="#2a7f62" strokeWidth={2} dot={false} name="Cash" />

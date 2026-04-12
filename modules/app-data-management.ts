@@ -105,7 +105,9 @@ export function parseStoredUserData(value: unknown): UserData {
     profile: {
       ...(profile as UserData["profile"]),
       members: Array.isArray(profile.members) ? profile.members : [],
-      monthlyExpenses: isRecord(profile.monthlyExpenses) ? (profile.monthlyExpenses as UserData["profile"]["monthlyExpenses"]) : {},
+      monthlyExpenses: isRecord(profile.monthlyExpenses)
+        ? ({ ...demoUserData.profile.monthlyExpenses, ...profile.monthlyExpenses } as UserData["profile"]["monthlyExpenses"])
+        : demoUserData.profile.monthlyExpenses,
       assets: Array.isArray(profile.assets) ? profile.assets : [],
       liabilities: Array.isArray(profile.liabilities) ? profile.liabilities : [],
       dependants: asNumber(profile.dependants, demoUserData.profile.dependants),

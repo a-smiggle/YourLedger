@@ -78,9 +78,9 @@
 
 ## Testing And Release Readiness
 
-- [ ] Add unit tests for borrowing power, repayment, scenario summary, and bank override logic.
-- [ ] Add tests for local storage hydration, import, export, reset, and migration behavior.
-- [ ] Add component or integration coverage for the core user flows.
-- [ ] Add a repeatable pre-release validation checklist covering lint, build, and manual browser QA.
-- [ ] Verify the app works cleanly in current desktop and mobile browsers.
-- [ ] Review README and in-app copy so the documented behavior matches the shipped product.
+- [x] Add unit tests for borrowing power, repayment, scenario summary, and bank override logic.
+- [x] Add tests for local storage hydration, import, export, reset, and migration behavior.
+- [x] Add component or integration coverage for the core user flows.
+- [x] Add a repeatable pre-release validation checklist covering lint, build, and manual browser QA.
+- [x] Verify the app works cleanly in current desktop and mobile browsers.
+- [x] Review README and in-app copy so the documented behavior matches the shipped product.

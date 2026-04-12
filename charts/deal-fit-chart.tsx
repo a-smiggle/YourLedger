@@ -42,8 +42,8 @@ export function DealFitChart({ scenarios }: Readonly<{ scenarios: ScenarioSummar
             width={isCompact ? 42 : 60}
           />
           <Tooltip
-            formatter={(value: number | null, name: string) => {
-              if (value === null) {
+            formatter={(value, name) => {
+              if (typeof value !== "number") {
                 return ["Not set", name === "totalDebt" ? "Total debt" : "Borrowing power"];
               }
 

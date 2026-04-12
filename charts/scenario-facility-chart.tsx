@@ -17,13 +17,17 @@ export function ScenarioFacilityChart({ points }: Readonly<{ points: ScenarioPro
           <XAxis dataKey="monthLabel" stroke="#57657a" tickLine={false} axisLine={false} interval={getTimeSeriesXAxisInterval(points.length, isCompact)} tick={{ fontSize: isCompact ? 11 : 12 }} tickMargin={8} minTickGap={isCompact ? 20 : 12} />
           <YAxis stroke="#57657a" tickFormatter={(value) => `$${Math.round(value / 1000)}k`} tickLine={false} axisLine={false} tick={{ fontSize: isCompact ? 11 : 12 }} width={isCompact ? 42 : 60} />
           <Tooltip
-            formatter={(value: number, name: string) => {
+            formatter={(value, name) => {
               const labelMap: Record<string, string> = {
                 purchaseDebtBalance: "Purchase debt",
                 existingPropertyDebtBalance: "Existing property debt",
                 propertyEquity: "Target property equity",
                 retainedPropertyEquity: "Retained property equity",
               };
+
+              if (typeof value !== "number") {
+                return [Array.isArray(value) ? value.join(", ") : value ?? "Not set", labelMap[name] ?? name];
+              }
 
               return [`$${value.toLocaleString()}`, labelMap[name] ?? name];
             }}

@@ -34,12 +34,16 @@ export function ScenarioSensitivityChart({ points }: Readonly<{ points: Scenario
             width={isCompact ? 42 : 60}
           />
           <Tooltip
-            formatter={(value: number, name: string) => {
+            formatter={(value, name) => {
               const labelMap: Record<string, string> = {
                 monthlyScenarioRepayment: "Monthly repayment",
                 projectedInterestPaid: "Interest paid",
                 projectedWealth: "Projected wealth",
               };
+
+              if (typeof value !== "number") {
+                return [Array.isArray(value) ? value.join(", ") : value ?? "Not set", labelMap[name] ?? name];
+              }
 
               return [`$${value.toLocaleString()}`, labelMap[name] ?? name];
             }}

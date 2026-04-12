@@ -128,7 +128,7 @@ function formatGapCurrency(value?: number) {
   return value >= 0 ? `+$${absoluteValue}` : `-$${absoluteValue}`;
 }
 
-function formatEligibilityState(summary?: ScenarioSummary) {
+function formatEligibilityState(summary?: ScenarioSummary | null) {
   if (!summary) {
     return "Unavailable";
   }
@@ -576,7 +576,7 @@ export default function LendersPage() {
 
         <SectionCard
           title="Loaded lender directory"
-          subtitle={selectedScenarioSummary
+          subtitle={selectedScenarioSummary && selectedScenario
             ? `Comparing products against ${selectedScenario.label}. Last refreshed ${lastRefreshedLabel}.`
             : `Loaded from BankData with overrides applied. Last refreshed ${lastRefreshedLabel}.`}
         >

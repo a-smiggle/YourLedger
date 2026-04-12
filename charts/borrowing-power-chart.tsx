@@ -36,7 +36,7 @@ export function BorrowingPowerChart({ scenarios }: Readonly<{ scenarios: Scenari
             tick={{ fontSize: isCompact ? 11 : 12 }}
             width={isCompact ? 42 : 60}
           />
-          <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, "Borrowing power"]} />
+          <Tooltip formatter={(value) => [typeof value === "number" ? `$${value.toLocaleString()}` : String(value), "Borrowing power"]} />
           <Bar dataKey="borrowingPower" fill="#012169" radius={[10, 10, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
