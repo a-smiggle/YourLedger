@@ -2,21 +2,26 @@
 
 import { Bar, ComposedChart, CartesianGrid, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
+import { useCompactLayout } from "@/hooks/use-compact-layout";
 import type { ScenarioSensitivityPoint } from "@/types/domain";
 
 export function ScenarioSensitivityChart({ points }: Readonly<{ points: ScenarioSensitivityPoint[] }>) {
+  const isCompact = useCompactLayout();
+
   return (
-    <div className="h-80 w-full">
+    <div className="h-72 w-full sm:h-80">
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart data={points} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>
           <CartesianGrid stroke="#e5e7eb" vertical={false} />
-          <XAxis dataKey="scenarioRateLabel" stroke="#57657a" tickLine={false} axisLine={false} />
+          <XAxis dataKey="scenarioRateLabel" stroke="#57657a" tickLine={false} axisLine={false} tick={{ fontSize: isCompact ? 11 : 12 }} tickMargin={8} minTickGap={isCompact ? 16 : 12} />
           <YAxis
             yAxisId="repayment"
             stroke="#57657a"
             tickFormatter={(value) => `$${Math.round(value / 1000)}k`}
             tickLine={false}
             axisLine={false}
+            tick={{ fontSize: isCompact ? 11 : 12 }}
+            width={isCompact ? 42 : 60}
           />
           <YAxis
             yAxisId="wealth"
@@ -25,6 +30,8 @@ export function ScenarioSensitivityChart({ points }: Readonly<{ points: Scenario
             tickFormatter={(value) => `$${Math.round(value / 1000)}k`}
             tickLine={false}
             axisLine={false}
+            tick={{ fontSize: isCompact ? 11 : 12 }}
+            width={isCompact ? 42 : 60}
           />
           <Tooltip
             formatter={(value: number, name: string) => {
@@ -38,6 +45,8 @@ export function ScenarioSensitivityChart({ points }: Readonly<{ points: Scenario
             }}
           />
           <Legend
+            iconSize={isCompact ? 10 : 14}
+            wrapperStyle={{ fontSize: isCompact ? 11 : 12, paddingTop: 8 }}
             formatter={(value) => {
               const labelMap: Record<string, string> = {
                 monthlyScenarioRepayment: "Monthly repayment",

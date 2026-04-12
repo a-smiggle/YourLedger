@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { useAppData } from "@/components/app-data-provider";
 import type { Asset, ExpenseBreakdown, HouseholdMember, HouseholdProfile, Liability, UserData } from "@/types/domain";
 
@@ -247,6 +249,7 @@ function ItemToolbar({
   disableMoveUp,
   disableMoveDown,
   disableRemove,
+  confirmRemoveLabel,
 }: Readonly<{
   onMoveUp?: () => void;
   onMoveDown?: () => void;
@@ -254,7 +257,24 @@ function ItemToolbar({
   disableMoveUp?: boolean;
   disableMoveDown?: boolean;
   disableRemove?: boolean;
+  confirmRemoveLabel?: string;
 }>) {
+  const [isConfirmingRemove, setIsConfirmingRemove] = useState(false);
+
+  const handleRemoveClick = () => {
+    if (disableRemove) {
+      return;
+    }
+
+    if (!isConfirmingRemove) {
+      setIsConfirmingRemove(true);
+      return;
+    }
+
+    setIsConfirmingRemove(false);
+    onRemove();
+  };
+
   return (
     <div className="flex flex-wrap gap-2">
       {onMoveUp ? (
@@ -280,10 +300,11 @@ function ItemToolbar({
       <button
         type="button"
         className="rounded-full border border-outline bg-white px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-muted disabled:cursor-not-allowed disabled:opacity-50"
-        onClick={onRemove}
+        onClick={handleRemoveClick}
         disabled={disableRemove}
+        aria-pressed={isConfirmingRemove}
       >
-        Remove
+        {isConfirmingRemove ? confirmRemoveLabel ?? "Confirm remove" : "Remove"}
       </button>
     </div>
   );
@@ -407,6 +428,7 @@ export function IncomeExpensesEditor() {
                       disableMoveUp={index === 0}
                       disableMoveDown={index === profile.members.length - 1}
                       disableRemove={profile.members.length === 1}
+                      confirmRemoveLabel="Confirm member"
                     />
                   </div>
 
@@ -716,6 +738,7 @@ export function AssetsLiabilitiesEditor() {
                           assets: currentProfile.assets.filter((candidate) => candidate.id !== asset.id),
                         }))
                       }
+                      confirmRemoveLabel="Confirm asset"
                     />
                   </div>
 
@@ -927,6 +950,7 @@ export function AssetsLiabilitiesEditor() {
                           liabilities: currentProfile.liabilities.filter((candidate) => candidate.id !== liability.id),
                         }))
                       }
+                      confirmRemoveLabel="Confirm debt"
                     />
                   </div>
 

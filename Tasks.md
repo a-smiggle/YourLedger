@@ -50,7 +50,7 @@
 - [x] Add debt and LVR trajectory charts.
 - [x] Add interest rate sensitivity charts.
 - [x] Ensure every chart updates in real time from persisted state.
-- [ ] Ensure chart layouts and labels are readable on mobile screens.
+- [x] Ensure chart layouts and labels are readable on mobile screens.
 
 ## Data Management
 
@@ -69,12 +69,12 @@
 
 ## UX, Accessibility, And Polish
 
-- [ ] Add loading and hydration-safe states anywhere persisted browser data is required.
+- [x] Add loading and hydration-safe states anywhere persisted browser data is required.
 - [x] Improve navigation so primary tasks are obvious on desktop and mobile.
-- [ ] Add success, error, and confirmation feedback for destructive or data-management actions.
-- [ ] Audit keyboard access, focus states, semantic markup, and screen-reader labels.
-- [ ] Audit responsive layouts across landing, dashboard, forms, charts, and results routes.
-- [ ] Remove remaining scaffold-only presentation details that make the product feel unfinished.
+- [x] Add success, error, and confirmation feedback for destructive or data-management actions.
+- [x] Audit keyboard access, focus states, semantic markup, and screen-reader labels.
+- [x] Audit responsive layouts across landing, dashboard, forms, charts, and results routes.
+- [x] Remove remaining scaffold-only presentation details that make the product feel unfinished.
 
 ## Testing And Release Readiness
 

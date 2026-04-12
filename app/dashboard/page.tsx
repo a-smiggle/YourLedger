@@ -6,7 +6,7 @@ import { GeneralInformationNotice } from "@/components/general-information-notic
 import { MetricCard } from "@/components/metric-card";
 import { SectionCard } from "@/components/section-card";
 import { DashboardSessionPreference } from "@/components/session-navigation";
-import { BorrowingPowerChart } from "@/charts/borrowing-power-chart";
+import { DealFitChart } from "@/charts/deal-fit-chart";
 import { calculateBorrowingPower } from "@/engine/borrowing-power";
 import { buildScenarioSummaries } from "@/engine/scenario-summaries";
 
@@ -19,9 +19,9 @@ export default function DashboardPage() {
     <AppShell>
       <DashboardSessionPreference />
       <div className="space-y-8">
-        <section className="rounded-[2rem] bg-primary px-8 py-10 text-white shadow-ambient sm:px-10">
+        <section className="rounded-[2rem] bg-primary px-6 py-8 text-white shadow-ambient sm:px-10 sm:py-10">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-100">Dashboard</p>
-          <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-5xl">
+          <h1 className="mt-4 text-3xl font-extrabold tracking-tight sm:text-5xl">
             Borrowing power, cashflow, and loan planning in one local-first workspace.
           </h1>
           <p className="mt-4 text-sm leading-7 text-blue-50 sm:text-base">
@@ -34,7 +34,7 @@ export default function DashboardPage() {
           body="Dashboard cards and charts are indicative planning outputs drawn from the current household profile and saved scenarios. Use them to frame the next discussion, not as a credit decision or personal advice."
         />
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <MetricCard
             label="Estimated borrowing"
             value={`$${result.estimatedBorrowingPower.toLocaleString()}`}
@@ -62,7 +62,7 @@ export default function DashboardPage() {
             title="Scenario comparison"
             subtitle="Compare live scenario outcomes from the current saved profile so borrowing headroom and debt structure are easier to review side by side."
           >
-            <BorrowingPowerChart scenarios={scenarioSummaries} />
+            <DealFitChart scenarios={scenarioSummaries} />
           </SectionCard>
         </div>
 

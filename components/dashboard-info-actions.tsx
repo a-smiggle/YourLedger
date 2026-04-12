@@ -56,6 +56,7 @@ export function DashboardInfoActions() {
         <button
           type="button"
           className="w-full rounded-2xl px-4 py-3 text-center text-sm font-semibold text-ink transition hover:bg-white"
+          aria-haspopup="dialog"
           onClick={() => setActiveDialog("about")}
         >
           About
@@ -64,7 +65,7 @@ export function DashboardInfoActions() {
 
       {activeDialog && isMounted
         ? createPortal(
-            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-primary/35 p-4" role="dialog" aria-modal="true">
+            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-primary/35 p-4" role="dialog" aria-modal="true" aria-labelledby="about-dialog-title">
               <button
                 type="button"
                 aria-label="Close dialog"
@@ -76,7 +77,7 @@ export function DashboardInfoActions() {
                 <div className="flex items-start justify-between gap-6">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-[0.22em] text-muted">About Your Ledger</p>
-                    <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-primary">
+                    <h2 id="about-dialog-title" className="mt-3 text-3xl font-extrabold tracking-tight text-primary">
                       A conservative, client-side planning tool for Australian households.
                     </h2>
                   </div>

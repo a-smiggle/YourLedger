@@ -307,7 +307,7 @@ export default function ResultsPage() {
           body="Results combine current profile data, saved scenario settings, and stored lender assumptions into indicative planning outputs. Treat every chart, repayment figure, and interpretation note as preparation for a formal review rather than a final recommendation."
         />
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
           <MetricCard
             label="Saved scenarios"
             value={comparisonRows.length.toString()}
@@ -385,7 +385,7 @@ export default function ResultsPage() {
                     key={row.scenario.id}
                     type="button"
                     className={[
-                      "rounded-[1.75rem] border p-5 text-left transition",
+                      "rounded-[1.75rem] border p-4 text-left transition sm:p-5",
                       isSelected
                         ? "border-primary bg-primary text-white shadow-ambient"
                         : "border-outline bg-surface-low text-ink hover:border-primary/35 hover:bg-white",
@@ -398,7 +398,7 @@ export default function ResultsPage() {
                           "text-xs font-bold uppercase tracking-[0.18em]",
                           isSelected ? "text-blue-100" : "text-muted",
                         ].join(" ")}>{`Rank ${index + 1}`}</p>
-                        <h2 className="mt-2 text-xl font-bold tracking-tight">{row.scenario.label}</h2>
+                        <h2 className="mt-2 text-lg font-bold tracking-tight sm:text-xl">{row.scenario.label}</h2>
                         <p className={[
                           "mt-2 text-sm leading-6",
                           isSelected ? "text-blue-50" : "text-muted",
@@ -477,7 +477,7 @@ export default function ResultsPage() {
           </div>
         </SectionCard>
 
-        <div className="grid gap-6 xl:grid-cols-2">
+        <div className="space-y-6">
           <SectionCard title="Total debt" subtitle={`Compare how quickly each scenario reduces total debt over ${RESULTS_YEARS_LABEL}.`}>
             {comparisonSeries.length > 0 ? (
               <ScenarioComparisonChart data={debtComparisonData} series={comparisonSeries} />
@@ -633,7 +633,7 @@ export default function ResultsPage() {
 
               {activeDetailTab === "payoff" ? (
                 <div className="space-y-6">
-                  <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     <MetricCard
                       label="Total debt"
                       value={formatOptionalCurrency(selectedScenarioSummary?.requiredLoanAmount)}
@@ -676,7 +676,7 @@ export default function ResultsPage() {
                     />
                   </div>
 
-                  <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+                  <div className="space-y-6">
                     <SectionCard
                       title="Scenario payoff path"
                       subtitle={`Monthly debt, offset, wealth, and interest-saving path for the next ${RESULTS_HORIZON_YEARS} years.`}
@@ -785,7 +785,7 @@ export default function ResultsPage() {
 
               {activeDetailTab === "sensitivity" ? (
                 <div className="space-y-6">
-                  <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+                  <div className="space-y-6">
                     <SectionCard
                       title="Interest rate sensitivity"
                       subtitle={`Tests the selected scenario over ${RESULTS_YEARS_LABEL} with parallel rate shifts across both facilities.`}
@@ -874,7 +874,7 @@ export default function ResultsPage() {
           subtitle="Test loan size, rate, term, offset, and extra repayments without changing the saved household profile or scenario setup."
         >
           <div className="grid gap-6 xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
-            <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-4 sm:grid-cols-2">
               <label className="block text-sm font-medium text-ink">
                 <span>Loan amount</span>
                 <input
@@ -1007,7 +1007,7 @@ export default function ResultsPage() {
             title="Serviceability trace"
             subtitle="Shows how assessable income, expense floors, liabilities, and the serviceability share feed the borrowing estimate."
           >
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <MetricCard
                 label="Assessable monthly income"
                 value={formatOptionalCurrency(serviceability.monthlyAssessableIncome)}
@@ -1089,7 +1089,7 @@ export default function ResultsPage() {
           </SectionCard>
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+        <div className="space-y-6">
           <SectionCard title="Projected asset balances" subtitle={`Profile-level asset projections now use the same ${RESULTS_YEARS_LABEL} monthly horizon as the scenario charts.`}>
             <AssetProjectionChart points={assetProjectionSummary.timeline} />
           </SectionCard>

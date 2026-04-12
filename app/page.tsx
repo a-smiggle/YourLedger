@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { AppLoadingState } from "@/components/app-loading-state";
 import { MarketingFooter } from "@/components/marketing-footer";
 import { MarketingHeader } from "@/components/marketing-header";
 import { useAppData } from "@/components/app-data-provider";
@@ -36,7 +37,21 @@ const productSteps = [
 ];
 
 export default function LandingPage() {
-  const { userData, bankData } = useAppData();
+  const { userData, bankData, isHydrated } = useAppData();
+
+  if (!isHydrated) {
+    return (
+      <div className="min-h-screen bg-background text-ink">
+        <LandingSessionRedirect />
+        <MarketingHeader sections={marketingSectionLinks} />
+        <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-14 lg:px-10 lg:py-20">
+          <AppLoadingState description="Your saved household data is being restored before landing-page metrics and charts are shown." />
+        </main>
+        <MarketingFooter />
+      </div>
+    );
+  }
+
   const result = calculateBorrowingPower(userData.profile);
   const scenarioSummaries = buildScenarioSummaries(userData, bankData);
   const netPosition = result.totalAssets - result.totalLiabilities;
@@ -46,18 +61,18 @@ export default function LandingPage() {
       <LandingSessionRedirect />
       <MarketingHeader sections={marketingSectionLinks} />
 
-      <main>
-        <section id="overview" className="mx-auto grid max-w-7xl scroll-mt-40 gap-10 px-6 py-14 lg:grid-cols-[minmax(0,1.35fr)_minmax(340px,0.9fr)] lg:px-10 lg:py-20">
+      <main id="main-content">
+        <section id="overview" className="mx-auto grid max-w-7xl scroll-mt-40 gap-8 px-4 py-12 sm:px-6 sm:py-14 lg:grid-cols-[minmax(0,1.35fr)_minmax(340px,0.9fr)] lg:px-10 lg:py-20">
           <div className="space-y-8">
             <div className="inline-flex rounded-full bg-primary-soft px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-primary">
               Privacy-first home loan planning
             </div>
             <div className="space-y-5">
-              <h1 className="max-w-4xl text-5xl font-extrabold tracking-tight text-primary sm:text-6xl">
-                  Understand your borrowing position with clear, conservative home loan planning.
+              <h1 className="max-w-4xl text-4xl font-extrabold tracking-tight text-primary sm:text-5xl lg:text-6xl">
+                Understand your borrowing position with clear, conservative home loan planning.
               </h1>
               <p className="max-w-2xl text-base leading-8 text-muted sm:text-lg">
-                  Your Ledger is a privacy-first planning tool for Australian households. It helps you organise household finances, review indicative borrowing power, and compare scenarios before taking the next step with a lender or adviser.
+                Your Ledger is a privacy-first planning tool for Australian households. It helps you organise household finances, review indicative borrowing power, and compare scenarios before taking the next step with a lender or adviser.
               </p>
             </div>
             <div className="flex flex-col gap-4 sm:flex-row">
@@ -87,7 +102,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="rounded-[2rem] bg-primary px-8 py-8 text-white shadow-ambient sm:px-10">
+          <div className="rounded-[2rem] bg-primary px-6 py-8 text-white shadow-ambient sm:px-10">
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-100">Example household snapshot</p>
             <h2 className="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl">
               See how key numbers can be brought together in one clear planning view.
@@ -114,7 +129,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="features" className="mx-auto max-w-7xl scroll-mt-40 px-6 py-6 lg:px-10 lg:py-10">
+        <section id="features" className="mx-auto max-w-7xl scroll-mt-40 px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
           <div className="mb-8 max-w-3xl">
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-muted">What the app covers</p>
             <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-primary sm:text-4xl">
@@ -130,8 +145,8 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-6 py-6 lg:px-10 lg:py-10">
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <MetricCard
               label="Estimated borrowing"
               value={`$${result.estimatedBorrowingPower.toLocaleString()}`}
@@ -155,7 +170,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="scenarios" className="mx-auto max-w-7xl scroll-mt-40 px-6 py-6 lg:px-10 lg:py-10">
+        <section id="scenarios" className="mx-auto max-w-7xl scroll-mt-40 px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
           <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
             <SectionCard
               title="Scenario comparison"
@@ -167,7 +182,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="how-it-works" className="mx-auto max-w-7xl scroll-mt-40 px-6 py-6 lg:px-10 lg:py-10">
+        <section id="how-it-works" className="mx-auto max-w-7xl scroll-mt-40 px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
             <SectionCard title="How this works" subtitle="The calculator is designed to keep the process understandable from the outset.">
               <ol className="space-y-4 text-sm leading-7 text-muted">

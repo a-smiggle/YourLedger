@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 
 import { AppShell } from "@/components/app-shell";
 import { useAppData } from "@/components/app-data-provider";
+import { FeedbackBanner } from "@/components/feedback-banner";
 import { GeneralInformationNotice } from "@/components/general-information-notice";
 import { PageHero } from "@/components/page-hero";
 import { SectionCard } from "@/components/section-card";
@@ -177,6 +179,8 @@ function getEffectiveScenarioValues(
 
 export default function ScenariosPage() {
   const { userData, bankData, setUserData } = useAppData();
+  const [feedback, setFeedback] = useState<{ tone: "success" | "error" | "info"; message: string } | null>(null);
+  const [pendingDeleteScenarioId, setPendingDeleteScenarioId] = useState<string | null>(null);
   const availableBanks = getAvailableBanks(bankData);
   const scenarioSummaries = buildScenarioSummaries(userData, bankData);
   const scenarioSummaryMap = getScenarioSummaryMap(scenarioSummaries);
@@ -209,9 +213,13 @@ export default function ScenariosPage() {
       const starterScenario = createStarterScenario(currentUserData, currentUserData.scenarios.length + 1);
       return updateScenarioStore(currentUserData, [...currentUserData.scenarios, starterScenario], starterScenario.id);
     });
+    setPendingDeleteScenarioId(null);
+    setFeedback({ tone: "success", message: "New deal scenario added. Fill in the target property, debt treatment, and offset plan next." });
   };
 
   const handleDuplicateScenario = (scenarioId: string) => {
+    let duplicatedLabel: string | null = null;
+
     setUserData((currentUserData) => {
       const sourceScenario = currentUserData.scenarios.find((scenario) => scenario.id === scenarioId);
 
@@ -225,20 +233,34 @@ export default function ScenariosPage() {
         id: createId("scenario"),
         label: buildDuplicateLabel(sourceScenario.label, currentUserData.scenarios),
       };
+      duplicatedLabel = duplicateScenario.label;
       const nextScenarios = [...currentUserData.scenarios];
       nextScenarios.splice(sourceIndex + 1, 0, duplicateScenario);
 
       return updateScenarioStore(currentUserData, nextScenarios, duplicateScenario.id);
     });
+
+    setPendingDeleteScenarioId(null);
+    setFeedback({ tone: "success", message: `Scenario duplicated as ${duplicatedLabel ?? "a new copy"}.` });
   };
 
   const handleDeleteScenario = (scenarioId: string) => {
+    if (pendingDeleteScenarioId !== scenarioId) {
+      setPendingDeleteScenarioId(scenarioId);
+      setFeedback({ tone: "info", message: "Press delete again to remove this scenario from the saved comparison set." });
+      return;
+    }
+
+    let removedLabel: string | null = null;
+
     setUserData((currentUserData) => {
       const scenarioIndex = currentUserData.scenarios.findIndex((scenario) => scenario.id === scenarioId);
 
       if (scenarioIndex < 0) {
         return currentUserData;
       }
+
+      removedLabel = currentUserData.scenarios[scenarioIndex]?.label ?? null;
 
       const nextScenarios = currentUserData.scenarios.filter((scenario) => scenario.id !== scenarioId);
       const fallbackSelectedId =
@@ -250,6 +272,9 @@ export default function ScenariosPage() {
 
       return updateScenarioStore(currentUserData, nextScenarios, preferredSelectedId);
     });
+
+    setPendingDeleteScenarioId(null);
+    setFeedback({ tone: "success", message: `${removedLabel ?? "Scenario"} removed from saved scenarios.` });
   };
 
   const handleSelectScenario = (scenarioId: string) => {
@@ -265,6 +290,8 @@ export default function ScenariosPage() {
         source: "manual",
       },
     }));
+
+    setPendingDeleteScenarioId(null);
   };
 
   return (
@@ -280,6 +307,8 @@ export default function ScenariosPage() {
           storageKey="scenarios-overview"
           body="Scenario comparisons show how the current deal structure interacts with household capacity and stored lender settings. They are planning outputs only and should be rechecked once product selection, valuation, and policy interpretation are confirmed."
         />
+
+        {feedback ? <FeedbackBanner tone={feedback.tone} message={feedback.message} /> : null}
 
         <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
           <SectionCard
@@ -363,8 +392,9 @@ export default function ScenariosPage() {
                           type="button"
                           className="rounded-full border border-outline bg-white px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-muted"
                           onClick={() => handleDeleteScenario(scenario.id)}
+                          aria-pressed={pendingDeleteScenarioId === scenario.id}
                         >
-                          Delete
+                          {pendingDeleteScenarioId === scenario.id ? "Confirm delete" : "Delete"}
                         </button>
                       </div>
                     </article>

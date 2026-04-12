@@ -17,14 +17,14 @@ export default function AboutPage() {
     <div className="min-h-screen bg-background text-ink">
       <MarketingHeader sections={marketingSectionLinks} />
 
-      <main>
-        <section className="mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] lg:px-10 lg:py-20">
+      <main id="main-content">
+        <section className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 sm:py-14 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] lg:px-10 lg:py-20">
           <div className="space-y-8">
             <div className="inline-flex rounded-full bg-primary-soft px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-primary">
               About Your Ledger
             </div>
             <div className="space-y-5">
-              <h1 className="max-w-4xl text-5xl font-extrabold tracking-tight text-primary sm:text-6xl">
+              <h1 className="max-w-4xl text-4xl font-extrabold tracking-tight text-primary sm:text-5xl lg:text-6xl">
                 A conservative, client-side planning tool for Australian households.
               </h1>
               <p className="max-w-2xl text-base leading-8 text-muted sm:text-lg">
@@ -41,7 +41,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="rounded-[2rem] bg-primary px-8 py-8 text-white shadow-ambient sm:px-10">
+          <div className="rounded-[2rem] bg-primary px-6 py-8 text-white shadow-ambient sm:px-10">
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-100">Our approach</p>
             <h2 className="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl">
               Built to support careful planning before a formal lending conversation.
@@ -52,8 +52,8 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-6 py-6 lg:px-10 lg:py-10">
-          <div className="grid gap-4 md:grid-cols-3">
+        <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             <MetricCard
               label="Privacy approach"
               value="Private"

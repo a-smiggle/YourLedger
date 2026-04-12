@@ -4,6 +4,7 @@ import type { ChangeEvent } from "react";
 import { useRef, useState } from "react";
 
 import { useAppData } from "@/components/app-data-provider";
+import { FeedbackBanner } from "@/components/feedback-banner";
 
 type FeedbackState = {
   tone: "success" | "error" | "info";
@@ -11,18 +12,6 @@ type FeedbackState = {
 };
 
 type ConfirmAction = "reset" | "clear" | null;
-
-function feedbackClassName(tone: FeedbackState["tone"]) {
-  if (tone === "success") {
-    return "border-emerald-200 bg-emerald-50 text-emerald-900";
-  }
-
-  if (tone === "error") {
-    return "border-warning/30 bg-warning/10 text-warning";
-  }
-
-  return "border-outline bg-surface-low text-muted";
-}
 
 export function DataManagementPanel() {
   const { exportAppState, importAppState, resetAppData, clearLocalData, storageRecoveryNotices } = useAppData();
@@ -99,19 +88,15 @@ export function DataManagementPanel() {
   return (
     <div className="space-y-4">
       {storageRecoveryNotices.map((notice) => (
-        <div key={notice.key} className="rounded-[1.25rem] border border-warning/30 bg-warning/10 px-4 py-4 text-sm text-warning">
+        <div key={notice.key} className="rounded-[1.25rem] border border-warning/30 bg-warning/10 px-4 py-4 text-sm text-warning" role="alert">
           <p className="font-semibold">{notice.title}</p>
           <p className="mt-2 leading-6">{notice.message}</p>
         </div>
       ))}
 
-      {feedback ? (
-        <div className={`rounded-[1.25rem] border px-4 py-4 text-sm leading-6 ${feedbackClassName(feedback.tone)}`}>
-          {feedback.message}
-        </div>
-      ) : null}
+      {feedback ? <FeedbackBanner tone={feedback.tone} message={feedback.message} /> : null}
 
-      <input ref={fileInputRef} type="file" accept="application/json" className="hidden" onChange={handleImportFile} />
+      <input ref={fileInputRef} type="file" accept="application/json" className="hidden" onChange={handleImportFile} aria-label="Import app state from JSON file" />
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <button

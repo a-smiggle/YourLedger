@@ -4,12 +4,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { useAppData } from "@/components/app-data-provider";
+import { AppLoadingState } from "@/components/app-loading-state";
 import { DashboardInfoActions } from "@/components/dashboard-info-actions";
 import { Navigation } from "@/components/navigation";
 import { ReturnToLandingButton } from "@/components/session-navigation";
 import { SponsoredPanel } from "@/components/sponsored-panel";
 
 export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) {
+  const { isHydrated } = useAppData();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -30,6 +33,37 @@ export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) 
     };
   }, []);
 
+  useEffect(() => {
+    if (!isMenuOpen) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isMenuOpen]);
+
+  useEffect(() => {
+    if (typeof document === "undefined") {
+      return;
+    }
+
+    const shouldLockScroll = isMenuOpen && window.innerWidth < 1024;
+    document.body.style.overflow = shouldLockScroll ? "hidden" : "";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen]);
+
   const handleNavigation = () => {
     if (window.innerWidth < 1024) {
       setIsMenuOpen(false);
@@ -43,7 +77,8 @@ export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) 
           type="button"
           aria-label={isMenuOpen ? "Hide menu" : "Open menu"}
           aria-expanded={isMenuOpen}
-          className="fixed left-6 top-5 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-outline bg-surface text-ink shadow-ambient transition-colors hover:bg-surface-low lg:hidden"
+          aria-controls="primary-navigation-panel"
+          className="fixed left-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-outline bg-surface text-ink shadow-ambient transition-colors hover:bg-surface-low sm:left-6 sm:top-5 lg:hidden"
           onClick={() => setIsMenuOpen((current) => !current)}
         >
           <span className="hamburger-icon" aria-hidden="true">
@@ -63,8 +98,10 @@ export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) 
         ) : null}
 
         <aside
+          id="primary-navigation-panel"
+          aria-label="Primary navigation"
           className={[
-            "fixed inset-y-0 left-0 z-40 w-72 border-r border-outline bg-surface-low px-6 pb-8 pt-4 transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:shrink-0",
+            "fixed inset-y-0 left-0 z-40 w-[min(18rem,calc(100vw-1rem))] border-r border-outline bg-surface-low px-5 pb-8 pt-4 transition-transform duration-200 sm:px-6 lg:sticky lg:top-0 lg:h-screen lg:w-72 lg:shrink-0",
             isMenuOpen ? "translate-x-0" : "-translate-x-full lg:hidden",
           ].join(" ")}
         >
@@ -111,10 +148,12 @@ export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) 
         </aside>
 
         <div className="min-w-0 flex-1">
-          <main className="px-6 py-20 lg:px-10 lg:py-8">
-            <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_18rem] xl:items-start">
-              <div className="min-w-0">{children}</div>
-              <section aria-label="Sponsored content" className="xl:sticky xl:top-8">
+          <main id="main-content" className="px-4 py-20 sm:px-6 lg:px-10 lg:py-8">
+            <div className="grid gap-6 sm:gap-8 xl:grid-cols-[minmax(0,1fr)_17rem] xl:items-start xl:gap-10">
+              <div className="min-w-0">
+                {isHydrated ? children : <AppLoadingState description="Your saved household data is being restored before the dashboard workflow is rendered." />}
+              </div>
+              <section aria-label="Sponsored content" className="mt-2 xl:sticky xl:top-8 xl:mt-0">
                 <SponsoredPanel />
               </section>
             </div>

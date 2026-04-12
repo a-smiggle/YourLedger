@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { AppShell } from "@/components/app-shell";
 import { useAppData } from "@/components/app-data-provider";
+import { FeedbackBanner } from "@/components/feedback-banner";
 import { GeneralInformationNotice } from "@/components/general-information-notice";
 import { PageHero } from "@/components/page-hero";
 import { SectionCard } from "@/components/section-card";
@@ -185,7 +186,7 @@ function ProductDetailPanel({
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-muted">Product details</p>
-          <h3 className="mt-2 text-lg font-bold text-primary">{product.name}</h3>
+          <h3 id={onClose ? "mobile-product-detail-title" : undefined} className="mt-2 text-lg font-bold text-primary">{product.name}</h3>
           <p className="mt-1 text-sm text-muted">{lender.name}</p>
         </div>
         {onClose ? (
@@ -243,6 +244,8 @@ function ProductDetailPanel({
 export default function LendersPage() {
   const router = useRouter();
   const { userData, bankData, setUserData } = useAppData();
+  const [feedback, setFeedback] = useState<{ tone: "success" | "error" | "info"; message: string } | null>(null);
+  const [pendingRemoveScenarioId, setPendingRemoveScenarioId] = useState<string | null>(null);
   const [lenderFilter, setLenderFilter] = useState("all");
   const [purposeFilter, setPurposeFilter] = useState<LoanPurposeFilter>("all");
   const [featureFilter, setFeatureFilter] = useState<FeatureFilter>("all");
@@ -325,15 +328,28 @@ export default function LendersPage() {
         source: "manual",
       },
     }));
+
+    setPendingRemoveScenarioId(null);
+    setFeedback({ tone: "info", message: "Selected scenario updated. Product comparisons now use this deal brief." });
   };
 
   const handleRemoveScenario = (scenarioId: string) => {
+    if (pendingRemoveScenarioId !== scenarioId) {
+      setPendingRemoveScenarioId(scenarioId);
+      setFeedback({ tone: "info", message: "Press remove again to delete this selected product from the comparison set." });
+      return;
+    }
+
+    let removedLabel: string | null = null;
+
     setUserData((currentUserData) => {
       const scenarioIndex = currentUserData.scenarios.findIndex((scenario) => scenario.id === scenarioId);
 
       if (scenarioIndex < 0) {
         return currentUserData;
       }
+
+      removedLabel = currentUserData.scenarios[scenarioIndex]?.label ?? null;
 
       const nextScenarios = currentUserData.scenarios.filter((scenario) => scenario.id !== scenarioId);
       const fallbackSelectedId =
@@ -345,6 +361,9 @@ export default function LendersPage() {
 
       return updateScenarioStore(currentUserData, nextScenarios, preferredSelectedId);
     });
+
+    setPendingRemoveScenarioId(null);
+    setFeedback({ tone: "success", message: `${removedLabel ?? "Scenario"} removed from selected products.` });
   };
 
   const handleCreateScenarioFromProduct = (bank: ResolvedBankInstitution, product: ResolvedBankProduct) => {
@@ -362,6 +381,9 @@ export default function LendersPage() {
 
       return updateScenarioStore(currentUserData, [...currentUserData.scenarios, nextScenario], nextScenario.id);
     });
+
+    setPendingRemoveScenarioId(null);
+    setFeedback({ tone: "success", message: `${bank.name} ${product.name} added as a new selected product scenario.` });
   };
 
   const handleAssignProductToSelectedScenario = (bank: ResolvedBankInstitution, product: ResolvedBankProduct) => {
@@ -383,6 +405,9 @@ export default function LendersPage() {
       loanTermYears: Math.min(scenario.loanTermYears ?? userData.profile.loanTermYears, product.maxTermYears),
       description: scenario.description || `Comparison using ${bank.name} ${product.name}.`,
     }));
+
+    setPendingRemoveScenarioId(null);
+    setFeedback({ tone: "success", message: `${selectedScenario.label} now uses ${bank.name} ${product.name} for the ${activeComparisonFacility} facility.` });
   };
 
   const handleOpenScenario = (scenarioId: string) => {
@@ -436,6 +461,8 @@ export default function LendersPage() {
           storageKey="lenders-overview"
           body="Lender and product comparisons summarise the current stored policy and product data for planning purposes. Always confirm rates, policy, fees, and eligibility with the lender or broker channel before acting on a shortlist."
         />
+
+        {feedback ? <FeedbackBanner tone={feedback.tone} message={feedback.message} /> : null}
 
         <SectionCard
           title="Selected products"
@@ -528,8 +555,9 @@ export default function LendersPage() {
                         type="button"
                         className="rounded-full border border-outline bg-white px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-muted"
                         onClick={() => handleRemoveScenario(scenario.id)}
+                        aria-pressed={pendingRemoveScenarioId === scenario.id}
                       >
-                        Remove
+                        {pendingRemoveScenarioId === scenario.id ? "Confirm remove" : "Remove"}
                       </button>
                     </div>
                   </article>
@@ -554,7 +582,7 @@ export default function LendersPage() {
         >
           <div className="space-y-5">
             {selectedScenarioSummary ? (
-              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
                 <div className="rounded-[1.5rem] border border-outline bg-surface-low px-4 py-4 text-sm text-muted">
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-muted">Active target</p>
                   <p className="mt-2 font-semibold text-ink">{formatOptionalCurrency(selectedScenarioSummary.targetPropertyValue)}</p>
@@ -586,7 +614,7 @@ export default function LendersPage() {
             )}
 
             {selectedScenario ? (
-              <div className="grid gap-3 md:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-2">
                 <button
                   type="button"
                   className={[
@@ -836,7 +864,7 @@ export default function LendersPage() {
             onClick={() => setOpenedProductId(null)}
           />
           <div className="relative flex min-h-full items-center justify-center p-4">
-            <div role="dialog" aria-modal="true" className="relative w-full max-w-lg">
+            <div role="dialog" aria-modal="true" aria-labelledby="mobile-product-detail-title" className="relative w-full max-w-lg">
               <ProductDetailPanel row={openedRow} onClose={() => setOpenedProductId(null)} />
             </div>
           </div>
