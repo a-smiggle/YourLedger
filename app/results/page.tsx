@@ -13,7 +13,7 @@ import { ScenarioFacilityChart } from "@/charts/scenario-facility-chart";
 import { ScenarioOutcomeChart } from "@/charts/scenario-outcome-chart";
 import { ScenarioSensitivityChart } from "@/charts/scenario-sensitivity-chart";
 import { buildAssetProjectionSummary } from "@/engine/asset-projections";
-import { calculateBorrowingPower } from "@/engine/borrowing-power";
+import { calculateBorrowingPower, calculateRepaymentSummary } from "@/engine/borrowing-power";
 import { buildScenarioProjectionSummaries, buildScenarioSensitivitySummaries } from "@/engine/scenario-projections";
 import { buildScenarioSummaries, resolveBankInstitutions } from "@/engine/scenario-summaries";
 import type { ScenarioProjectionPoint } from "@/types/domain";
@@ -39,6 +39,7 @@ const detailTabs: { id: DetailTab; label: string }[] = [
   { id: "facilities", label: "Facilities" },
   { id: "sensitivity", label: "Sensitivity" },
 ];
+const calculatorFieldClassName = "mt-2 w-full rounded-2xl border border-outline bg-white px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-primary";
 
 function formatOptionalCurrency(value?: number) {
   return value !== undefined ? `$${value.toLocaleString()}` : "Not set";
@@ -55,6 +56,34 @@ function formatGap(value?: number) {
 
 function formatOptionalPercentage(value?: number) {
   return value !== undefined ? `${value.toFixed(1)}%` : "Not applicable";
+}
+
+function parseNonNegativeNumberInput(value: string) {
+  if (value.trim() === "") {
+    return 0;
+  }
+
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? Math.max(parsed, 0) : 0;
+}
+
+function formatMonthsAsDuration(months: number) {
+  if (months <= 0) {
+    return "0 months";
+  }
+
+  const years = Math.floor(months / 12);
+  const remainingMonths = months % 12;
+
+  if (years === 0) {
+    return `${remainingMonths} months`;
+  }
+
+  if (remainingMonths === 0) {
+    return `${years} years`;
+  }
+
+  return `${years} years ${remainingMonths} months`;
 }
 
 function formatFit(summary: ReturnType<typeof buildScenarioSummaries>[number] | undefined) {
@@ -91,7 +120,7 @@ function formatFeatureList(features?: {
 
 function buildComparisonTimelineData(
   rows: Array<{ scenarioId: string; timeline?: ScenarioProjectionPoint[] }>,
-  valueSelector: (point: ScenarioProjectionPoint) => number,
+  valueSelector: (point: ScenarioProjectionPoint) => number | null,
 ) {
   const firstTimeline = rows.find((row) => row.timeline)?.timeline;
 
@@ -114,11 +143,18 @@ function buildComparisonTimelineData(
 
 export default function ResultsPage() {
   const { userData, setUserData, bankData } = useAppData();
+  const borrowingResult = calculateBorrowingPower(userData.profile);
   const [comparisonSort, setComparisonSort] = useState<ComparisonSort>("viability");
   const [showViableOnly, setShowViableOnly] = useState(false);
   const [activeDetailTab, setActiveDetailTab] = useState<DetailTab>("payoff");
+  const [repaymentInputs, setRepaymentInputs] = useState({
+    loanAmount: borrowingResult.estimatedBorrowingPower,
+    interestRate: userData.profile.targetInterestRate,
+    loanTermYears: userData.profile.loanTermYears,
+    offsetBalance: 0,
+    extraMonthlyRepayment: 0,
+  });
 
-  const borrowingResult = calculateBorrowingPower(userData.profile);
   const scenarioSummaries = buildScenarioSummaries(userData, bankData);
   const scenarioProjectionSummaries = buildScenarioProjectionSummaries(userData, bankData, RESULTS_HORIZON_MONTHS);
   const scenarioSensitivitySummaries = buildScenarioSensitivitySummaries(userData, bankData, RESULTS_HORIZON_MONTHS);
@@ -193,6 +229,7 @@ export default function ResultsPage() {
   const selectedPurchaseProduct = selectedComparisonRow?.selectedPurchaseProduct;
   const selectedEquityBank = selectedComparisonRow?.selectedEquityBank;
   const selectedEquityProduct = selectedComparisonRow?.selectedEquityProduct;
+  const serviceability = borrowingResult.serviceabilityBreakdown;
   const projectedAssetTotal = assetProjectionSummary.timeline[assetProjectionSummary.timeline.length - 1]?.totalProjectedAssets ?? 0;
   const viableScenarioCount = comparisonRows.filter((row) => row.isViable).length;
   const bestRankedScenario = visibleComparisonRows[0]?.scenario.label ?? "No scenarios";
@@ -209,6 +246,41 @@ export default function ResultsPage() {
   const wealthComparisonData = buildComparisonTimelineData(comparisonTimelineRows, (point) => point.totalWealth);
   const offsetComparisonData = buildComparisonTimelineData(comparisonTimelineRows, (point) => point.offsetBalance);
   const interestSavedComparisonData = buildComparisonTimelineData(comparisonTimelineRows, (point) => point.cumulativeInterestSaved);
+  const combinedLvrComparisonData = buildComparisonTimelineData(comparisonTimelineRows, (point) => point.combinedLvr);
+  const selectedLvrChartData = selectedScenarioProjection?.timeline.map((point) => ({
+    monthLabel: point.monthLabel,
+    purchaseLvr: point.purchaseLvr,
+    existingPropertyLvr: point.existingPropertyLvr,
+    combinedLvr: point.combinedLvr,
+  })) ?? [];
+  const selectedLvrSeries = [
+    { key: "purchaseLvr", label: "Purchase LVR", color: "#012169" },
+    { key: "existingPropertyLvr", label: "Existing property LVR", color: "#8c3a1f" },
+    { key: "combinedLvr", label: "Combined LVR", color: "#2a7f62" },
+  ];
+  const repaymentSummary = calculateRepaymentSummary(
+    repaymentInputs.loanAmount,
+    repaymentInputs.interestRate,
+    repaymentInputs.loanTermYears,
+    repaymentInputs.offsetBalance,
+    repaymentInputs.extraMonthlyRepayment,
+  );
+
+  const handleLoadSelectedScenarioIntoRepaymentCalculator = () => {
+    setRepaymentInputs({
+      loanAmount:
+        selectedScenarioSummary?.requiredLoanAmount ??
+        selectedScenarioSummary?.repaymentLoanAmount ??
+        borrowingResult.estimatedBorrowingPower,
+      interestRate:
+        selectedScenario?.targetInterestRate ??
+        selectedPurchaseProduct?.interestRate ??
+        userData.profile.targetInterestRate,
+      loanTermYears: selectedScenario?.loanTermYears ?? userData.profile.loanTermYears,
+      offsetBalance: selectedScenarioSummary?.effectiveOffsetBalance ?? 0,
+      extraMonthlyRepayment: 0,
+    });
+  };
 
   const handleSelectScenario = (scenarioId: string) => {
     setUserData((current) => ({
@@ -443,6 +515,22 @@ export default function ResultsPage() {
               </div>
             )}
           </SectionCard>
+
+          <SectionCard title="Combined LVR" subtitle={`Compare total LVR movement across the same ${RESULTS_YEARS_LABEL} horizon.`}>
+            {comparisonSeries.length > 0 ? (
+              <ScenarioComparisonChart
+                data={combinedLvrComparisonData}
+                series={comparisonSeries}
+                valueFormatter={(value) => `${value.toFixed(1)}%`}
+                axisTickFormatter={(value) => `${Math.round(value)}%`}
+              />
+            ) : (
+              <div className="rounded-[1.5rem] border border-dashed border-outline bg-surface-low px-5 py-6 text-sm text-muted">
+                <p className="font-semibold text-ink">No LVR comparison available</p>
+                <p className="mt-2 leading-6">Add a scenario or widen the filter so the chart can compare LVR paths across the visible set.</p>
+              </div>
+            )}
+          </SectionCard>
         </div>
 
         <SectionCard
@@ -633,6 +721,25 @@ export default function ResultsPage() {
                     )}
                   </SectionCard>
 
+                  <SectionCard
+                    title="LVR trajectories"
+                    subtitle={`Tracks purchase, retained-property, and combined LVR over ${RESULTS_YEARS_LABEL}.`}
+                  >
+                    {selectedScenarioProjection ? (
+                      <ScenarioComparisonChart
+                        data={selectedLvrChartData}
+                        series={selectedLvrSeries}
+                        valueFormatter={(value) => `${value.toFixed(1)}%`}
+                        axisTickFormatter={(value) => `${Math.round(value)}%`}
+                      />
+                    ) : (
+                      <div className="rounded-[1.5rem] border border-dashed border-outline bg-surface-low px-5 py-6 text-sm text-muted">
+                        <p className="font-semibold text-ink">No LVR trajectory available</p>
+                        <p className="mt-2 leading-6">Select a scenario first so the app can track LVR movement as debt amortises and property values change.</p>
+                      </div>
+                    )}
+                  </SectionCard>
+
                   <div className="grid gap-6 lg:grid-cols-2">
                     <SectionCard title="Purchase facility" subtitle="Primary property loan product selected for this scenario.">
                       <div className="space-y-2 text-sm text-muted">
@@ -641,6 +748,7 @@ export default function ResultsPage() {
                         <p><span className="font-semibold text-ink">Rate:</span> {selectedPurchaseProduct ? `${selectedPurchaseProduct.interestRate.toFixed(2)}%` : "Not set"}</p>
                         <p><span className="font-semibold text-ink">Comparison rate:</span> {selectedPurchaseProduct?.comparisonRate ? `${selectedPurchaseProduct.comparisonRate.toFixed(2)}%` : "Not listed"}</p>
                         <p><span className="font-semibold text-ink">Max LVR:</span> {selectedPurchaseProduct?.maxLvr ? `${selectedPurchaseProduct.maxLvr}%` : "Not listed"}</p>
+                        <p><span className="font-semibold text-ink">Projected ending LVR:</span> {formatOptionalPercentage(selectedScenarioProjection?.projectedPurchaseLvr ?? undefined)}</p>
                         <p><span className="font-semibold text-ink">Max term:</span> {selectedPurchaseProduct ? `${selectedPurchaseProduct.maxTermYears} years` : "Not set"}</p>
                         <p><span className="font-semibold text-ink">Features:</span> {formatFeatureList(selectedPurchaseProduct?.features)}</p>
                       </div>
@@ -659,6 +767,7 @@ export default function ResultsPage() {
                           <p><span className="font-semibold text-ink">Rate:</span> {selectedEquityProduct ? `${selectedEquityProduct.interestRate.toFixed(2)}%` : "Not set"}</p>
                           <p><span className="font-semibold text-ink">Comparison rate:</span> {selectedEquityProduct?.comparisonRate ? `${selectedEquityProduct.comparisonRate.toFixed(2)}%` : "Not listed"}</p>
                           <p><span className="font-semibold text-ink">Max LVR:</span> {selectedEquityProduct?.maxLvr ? `${selectedEquityProduct.maxLvr}%` : "Not listed"}</p>
+                          <p><span className="font-semibold text-ink">Projected ending LVR:</span> {formatOptionalPercentage(selectedScenarioProjection?.projectedExistingPropertyLvr ?? undefined)}</p>
                           <p><span className="font-semibold text-ink">Max term:</span> {selectedEquityProduct ? `${selectedEquityProduct.maxTermYears} years` : "Not set"}</p>
                           <p><span className="font-semibold text-ink">Features:</span> {formatFeatureList(selectedEquityProduct?.features)}</p>
                         </div>
@@ -754,6 +863,226 @@ export default function ResultsPage() {
           )}
         </SectionCard>
 
+        <SectionCard
+          title="Repayment calculator"
+          subtitle="Test loan size, rate, term, offset, and extra repayments without changing the saved household profile or scenario setup."
+        >
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="block text-sm font-medium text-ink">
+                <span>Loan amount</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="1000"
+                  value={repaymentInputs.loanAmount}
+                  onChange={(event) =>
+                    setRepaymentInputs((current) => ({
+                      ...current,
+                      loanAmount: parseNonNegativeNumberInput(event.target.value),
+                    }))
+                  }
+                  className={calculatorFieldClassName}
+                />
+              </label>
+
+              <label className="block text-sm font-medium text-ink">
+                <span>Interest rate</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={repaymentInputs.interestRate}
+                  onChange={(event) =>
+                    setRepaymentInputs((current) => ({
+                      ...current,
+                      interestRate: parseNonNegativeNumberInput(event.target.value),
+                    }))
+                  }
+                  className={calculatorFieldClassName}
+                />
+              </label>
+
+              <label className="block text-sm font-medium text-ink">
+                <span>Loan term (years)</span>
+                <input
+                  type="number"
+                  min="1"
+                  step="1"
+                  value={repaymentInputs.loanTermYears}
+                  onChange={(event) =>
+                    setRepaymentInputs((current) => ({
+                      ...current,
+                      loanTermYears: Math.max(parseNonNegativeNumberInput(event.target.value), 1),
+                    }))
+                  }
+                  className={calculatorFieldClassName}
+                />
+              </label>
+
+              <label className="block text-sm font-medium text-ink">
+                <span>Offset balance</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="1000"
+                  value={repaymentInputs.offsetBalance}
+                  onChange={(event) =>
+                    setRepaymentInputs((current) => ({
+                      ...current,
+                      offsetBalance: parseNonNegativeNumberInput(event.target.value),
+                    }))
+                  }
+                  className={calculatorFieldClassName}
+                />
+              </label>
+
+              <label className="block text-sm font-medium text-ink md:col-span-2">
+                <span>Extra monthly repayment</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="10"
+                  value={repaymentInputs.extraMonthlyRepayment}
+                  onChange={(event) =>
+                    setRepaymentInputs((current) => ({
+                      ...current,
+                      extraMonthlyRepayment: parseNonNegativeNumberInput(event.target.value),
+                    }))
+                  }
+                  className={calculatorFieldClassName}
+                />
+              </label>
+
+              {selectedScenario ? (
+                <div className="md:col-span-2">
+                  <button
+                    type="button"
+                    className="rounded-full bg-primary px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-white"
+                    onClick={handleLoadSelectedScenarioIntoRepaymentCalculator}
+                  >
+                    Use selected scenario
+                  </button>
+                </div>
+              ) : null}
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
+              <div className="rounded-[1.5rem] bg-surface-low p-5 text-sm text-muted">
+                <p className="text-xs font-bold uppercase tracking-[0.18em]">Scheduled monthly repayment</p>
+                <p className="mt-2 text-2xl font-semibold text-ink">{formatOptionalCurrency(repaymentSummary.scheduledMonthlyRepayment)}</p>
+                <p className="mt-2">Principal-and-interest repayment before any extra monthly contribution is added.</p>
+              </div>
+
+              <div className="rounded-[1.5rem] bg-surface-low p-5 text-sm text-muted">
+                <p className="text-xs font-bold uppercase tracking-[0.18em]">Total monthly outflow</p>
+                <p className="mt-2 text-2xl font-semibold text-ink">{formatOptionalCurrency(repaymentSummary.totalMonthlyRepayment)}</p>
+                <p className="mt-2">Includes the scheduled repayment plus any extra amount entered above.</p>
+              </div>
+
+              <div className="rounded-[1.5rem] bg-surface-low p-5 text-sm text-muted">
+                <p className="text-xs font-bold uppercase tracking-[0.18em]">Repayment cadence guide</p>
+                <p className="mt-2"><span className="font-semibold text-ink">Fortnightly:</span> {formatOptionalCurrency(repaymentSummary.fortnightlyRepayment)}</p>
+                <p className="mt-1"><span className="font-semibold text-ink">Weekly:</span> {formatOptionalCurrency(repaymentSummary.weeklyRepayment)}</p>
+              </div>
+
+              <div className="rounded-[1.5rem] bg-surface-low p-5 text-sm text-muted">
+                <p className="text-xs font-bold uppercase tracking-[0.18em]">Payoff and interest</p>
+                <p className="mt-2"><span className="font-semibold text-ink">Payoff time:</span> {formatMonthsAsDuration(repaymentSummary.payoffMonths)}</p>
+                <p className="mt-1"><span className="font-semibold text-ink">Total interest:</span> {formatOptionalCurrency(repaymentSummary.totalInterestPaid)}</p>
+                <p className="mt-1"><span className="font-semibold text-ink">Offset interest saved:</span> {formatOptionalCurrency(repaymentSummary.interestSavedFromOffset)}</p>
+              </div>
+            </div>
+          </div>
+        </SectionCard>
+
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+          <SectionCard
+            title="Serviceability trace"
+            subtitle="Shows how assessable income, expense floors, liabilities, and the serviceability share feed the borrowing estimate."
+          >
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <MetricCard
+                label="Assessable monthly income"
+                value={formatOptionalCurrency(serviceability.monthlyAssessableIncome)}
+                detail="Total annual assessed income divided by 12 before the serviceability share is applied."
+              />
+              <MetricCard
+                label="Income after serviceability share"
+                value={formatOptionalCurrency(serviceability.monthlyIncomeAfterServiceabilityShare)}
+                detail="Current borrowing model applies the lending serviceability share to monthly assessed income."
+              />
+              <MetricCard
+                label="Living expenses used"
+                value={formatOptionalCurrency(serviceability.monthlyLivingExpensesUsed)}
+                detail={serviceability.usesExpenseFloor ? "The expense floor is currently higher than declared expenses." : "Declared expenses are currently higher than the floor."}
+              />
+              <MetricCard
+                label="Liability repayments"
+                value={formatOptionalCurrency(serviceability.monthlyLiabilityRepayments)}
+                detail="Current monthly liability commitments added on top of living expenses."
+              />
+            </div>
+
+            <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+              <div className="overflow-x-auto">
+                <table className="min-w-full border-separate border-spacing-y-3 text-left text-sm text-muted">
+                  <thead>
+                    <tr>
+                      <th className="px-4 text-xs font-bold uppercase tracking-[0.18em] text-muted">Member</th>
+                      <th className="px-4 text-xs font-bold uppercase tracking-[0.18em] text-muted">Gross income</th>
+                      <th className="px-4 text-xs font-bold uppercase tracking-[0.18em] text-muted">Bonus used</th>
+                      <th className="px-4 text-xs font-bold uppercase tracking-[0.18em] text-muted">Rent used</th>
+                      <th className="px-4 text-xs font-bold uppercase tracking-[0.18em] text-muted">HELP loading</th>
+                      <th className="px-4 text-xs font-bold uppercase tracking-[0.18em] text-muted">Assessed annual income</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {serviceability.members.map((member) => (
+                      <tr key={member.memberId} className="rounded-[1.5rem] bg-surface-low">
+                        <td className="rounded-l-[1.5rem] px-4 py-4 font-semibold text-ink">{member.name}</td>
+                        <td className="px-4 py-4">{formatOptionalCurrency(member.annualGrossIncome)}</td>
+                        <td className="px-4 py-4">{formatOptionalCurrency(member.annualBonusIncomeUsed)}</td>
+                        <td className="px-4 py-4">{formatOptionalCurrency(member.annualRentalIncomeUsed)}</td>
+                        <td className="px-4 py-4">{formatOptionalCurrency(member.annualHecsHelpLoading)}</td>
+                        <td className="rounded-r-[1.5rem] px-4 py-4">{formatOptionalCurrency(member.assessedAnnualIncome)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="space-y-3 text-sm text-muted">
+                <div className="rounded-[1.5rem] bg-surface-low p-5">
+                  <p><span className="font-semibold text-ink">Declared monthly expenses:</span> {formatOptionalCurrency(serviceability.monthlyDeclaredExpenses)}.</p>
+                  <p className="mt-2"><span className="font-semibold text-ink">Expense floor:</span> {formatOptionalCurrency(serviceability.monthlyExpenseFloor)}.</p>
+                  <p className="mt-2"><span className="font-semibold text-ink">Assessed expenses:</span> {formatOptionalCurrency(serviceability.monthlyAssessedExpenses)}.</p>
+                  <p className="mt-2"><span className="font-semibold text-ink">Monthly surplus:</span> {formatOptionalCurrency(borrowingResult.monthlySurplus)}.</p>
+                </div>
+              </div>
+            </div>
+          </SectionCard>
+
+          <SectionCard
+            title="Interpretation notes"
+            subtitle="Current assumptions and the main reasons the borrowing result is moving up or down."
+          >
+            <div className="space-y-3 text-sm text-muted">
+              {borrowingResult.interpretationNotes.map((note) => (
+                <div key={note.title} className="rounded-[1.5rem] bg-surface-low p-5">
+                  <p className="font-semibold text-ink">{note.title}</p>
+                  <p className="mt-2 leading-6">{note.body}</p>
+                </div>
+              ))}
+
+              <div className="rounded-[1.5rem] border border-outline bg-white p-5">
+                <p className="font-semibold text-ink">General information only</p>
+                <p className="mt-2 leading-6">Outputs remain indicative planning estimates. Product fit, debt projections, and serviceability summaries do not replace formal credit assessment or personal financial advice.</p>
+              </div>
+            </div>
+          </SectionCard>
+        </div>
+
         <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
           <SectionCard title="Projected asset balances" subtitle={`Profile-level asset projections now use the same ${RESULTS_YEARS_LABEL} monthly horizon as the scenario charts.`}>
             <AssetProjectionChart points={assetProjectionSummary.timeline} />
@@ -822,15 +1151,12 @@ export default function ResultsPage() {
           </div>
         </SectionCard>
 
-        <SectionCard title="Interpretation notes" subtitle="Current assumptions and important caveats for the results shown above.">
+        <SectionCard title="Static assumptions" subtitle="Broader caveats that still apply across all calculations and charts.">
           <ul className="space-y-3 text-sm text-muted">
-            <li>Outputs are indicative only and do not constitute financial advice.</li>
-            <li>Borrowing power uses conservative expense treatment, shaded bonus and rental income, and HELP debt loadings.</li>
             <li>Total debt includes the purchase loan, any equity release, and any existing home loan balance marked for refinance in the scenario.</li>
             <li>Product fit currently checks product minimum and maximum loan sizes plus max LVR against both the purchase property and any retained existing property security.</li>
             <li>Scenario payoff charts now project monthly points across the next {RESULTS_HORIZON_YEARS} years and render sparse month labels for readability.</li>
             <li>Interest-rate sensitivity applies the same rate shock to both the purchase facility and the equity facility, while keeping income, expenses, and growth assumptions unchanged.</li>
-            <li>Offset treatment is indicative only and currently reduces the effective repayment balance rather than modelling full amortisation behaviour over time.</li>
             <li>After-tax cashflow uses current ATO resident tax bands plus the 2% Medicare levy and does not model deductions or family tax adjustments.</li>
             <li>Profile asset projections also use a {RESULTS_YEARS_LABEL} horizon, but they remain separate from the scenario-specific debt structure and product-fit calculations.</li>
             <li>Super defaults are prefilled from the current 12% super guarantee rate and can be overridden per asset.</li>

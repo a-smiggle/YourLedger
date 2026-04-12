@@ -5,4 +5,5 @@ export const lendingAssumptions = {
   rentalShading: 0.75,
   hecsHelpMonthlyLoading: 250,
   serviceabilityShare: 0.92,
+  maximumExistingPropertyLvrForEquityRelease: 0.8,
 } as const;

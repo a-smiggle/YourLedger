@@ -61,6 +61,48 @@ export type BorrowingPowerResult = {
   totalLiabilities: number;
   estimatedBorrowingPower: number;
   assessedRepaymentRate: number;
+  serviceabilityBreakdown: BorrowingPowerServiceabilityBreakdown;
+  interpretationNotes: BorrowingPowerInterpretationNote[];
+};
+
+export type BorrowingPowerMemberIncomeBreakdown = {
+  memberId: string;
+  name: string;
+  annualGrossIncome: number;
+  annualBonusIncome: number;
+  annualBonusIncomeUsed: number;
+  annualRentalIncome: number;
+  annualRentalIncomeUsed: number;
+  annualHecsHelpLoading: number;
+  assessedAnnualIncome: number;
+};
+
+export type BorrowingPowerServiceabilityBreakdown = {
+  monthlyAssessableIncome: number;
+  monthlyIncomeAfterServiceabilityShare: number;
+  monthlyDeclaredExpenses: number;
+  monthlyExpenseFloor: number;
+  usesExpenseFloor: boolean;
+  monthlyLivingExpensesUsed: number;
+  monthlyLiabilityRepayments: number;
+  monthlyAssessedExpenses: number;
+  members: BorrowingPowerMemberIncomeBreakdown[];
+};
+
+export type BorrowingPowerInterpretationNote = {
+  title: string;
+  body: string;
+};
+
+export type RepaymentCalculationSummary = {
+  scheduledMonthlyRepayment: number;
+  totalMonthlyRepayment: number;
+  fortnightlyRepayment: number;
+  weeklyRepayment: number;
+  totalInterestPaid: number;
+  totalRepayments: number;
+  payoffMonths: number;
+  interestSavedFromOffset: number;
 };
 
 export type ProjectionAssumptions = {
@@ -104,6 +146,9 @@ export type ScenarioProjectionPoint = {
   totalDebtBalance: number;
   purchaseDebtBalance: number;
   existingPropertyDebtBalance: number;
+  purchaseLvr: number | null;
+  existingPropertyLvr: number | null;
+  combinedLvr: number | null;
   offsetBalance: number;
   cumulativeInterestPaid: number;
   cumulativeInterestSaved: number;
@@ -128,6 +173,9 @@ export type ScenarioProjectionSummary = {
   projectedInterestPaid: number;
   projectedInterestSaved: number;
   projectedOffsetBalance: number;
+  projectedPurchaseLvr: number | null;
+  projectedExistingPropertyLvr: number | null;
+  projectedCombinedLvr: number | null;
   projectedWealth: number;
   timeline: ScenarioProjectionPoint[];
 };

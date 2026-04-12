@@ -1,3 +1,4 @@
+import { lendingAssumptions } from "@/config/lending-assumptions";
 import { calculateBorrowingPower, calculateMonthlyRepayment } from "@/engine/borrowing-power";
 import type { Asset, BankData, BankInstitution, BankProduct, Liability, ScenarioSummary, UserData, UserScenario } from "@/types/domain";
 
@@ -49,14 +50,16 @@ function getScenarioDealMetrics(
   scenario: UserScenario,
   purchaseProduct?: ResolvedBankProduct,
 ) {
-  const maximumExistingPropertyLvr = 0.8;
   const propertyTreatment = scenario.propertyTreatment ?? "equity-release";
   const hasOffsetAccount = scenario.hasOffsetAccount ?? false;
   const availableCash = sumAssetsByCategory(userData.profile.assets, "cash");
   const currentPropertyValue = sumAssetsByCategory(userData.profile.assets, "property");
   const currentHomeLoanBalance = sumLiabilitiesByCategory(userData.profile.liabilities, "home-loan");
   const currentEquity = Math.max(currentPropertyValue - currentHomeLoanBalance, 0);
-  const availableEquity = Math.max(Math.round(currentPropertyValue * maximumExistingPropertyLvr) - currentHomeLoanBalance, 0);
+  const availableEquity = Math.max(
+    Math.round(currentPropertyValue * lendingAssumptions.maximumExistingPropertyLvrForEquityRelease) - currentHomeLoanBalance,
+    0,
+  );
   const targetPropertyValue = clampCurrency(scenario.targetPropertyValue) ?? 0;
   const offsetBalance = hasOffsetAccount ? clampCurrency(scenario.offsetBalance) ?? 0 : 0;
   const defaultCashContribution = Math.max(availableCash - offsetBalance, 0);

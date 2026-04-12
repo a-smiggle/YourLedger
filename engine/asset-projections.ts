@@ -1,35 +1,13 @@
+import { assetProjectionAssumptions, taxAssumptions } from "@/config/calculation-assumptions";
+import { calculateResidentIncomeTax } from "@/engine/tax";
 import type { Asset, AssetProjection, AssetProjectionPoint, AssetProjectionSummary, HouseholdMember, HouseholdProfile } from "@/types/domain";
 
-const SUPER_GUARANTEE_RATE = 0.12;
-const MEDICARE_LEVY_RATE = 0.02;
-const DEFAULT_SAVINGS_ALLOCATION_RATE = 1;
+const SUPER_GUARANTEE_RATE = assetProjectionAssumptions.superGuaranteeRate;
+const MEDICARE_LEVY_RATE = taxAssumptions.medicareLevyRate;
+const DEFAULT_SAVINGS_ALLOCATION_RATE = assetProjectionAssumptions.savingsAllocationRate;
 const DEFAULT_GROWTH_BY_CATEGORY: Record<Asset["category"], number> = {
-  cash: 4.5,
-  property: 3,
-  super: 7,
-  vehicle: 0,
-  other: 3,
+  ...assetProjectionAssumptions.defaultGrowthByCategory,
 };
-
-function calculateResidentIncomeTax(taxableIncome: number) {
-  if (taxableIncome <= 18_200) {
-    return 0;
-  }
-
-  if (taxableIncome <= 45_000) {
-    return (taxableIncome - 18_200) * 0.16;
-  }
-
-  if (taxableIncome <= 135_000) {
-    return 4_288 + (taxableIncome - 45_000) * 0.3;
-  }
-
-  if (taxableIncome <= 190_000) {
-    return 31_288 + (taxableIncome - 135_000) * 0.37;
-  }
-
-  return 51_638 + (taxableIncome - 190_000) * 0.45;
-}
 
 function calculateMemberAnnualTaxableIncome(member: HouseholdMember) {
   return member.annualGrossIncome + member.annualBonusIncome + member.annualRentalIncome;

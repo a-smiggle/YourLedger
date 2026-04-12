@@ -12,6 +12,7 @@ type ScenarioComparisonChartProps = {
   data: Array<Record<string, number | string | null>>;
   series: ScenarioComparisonSeries[];
   valueFormatter?: (value: number) => string;
+  axisTickFormatter?: (value: number) => string;
 };
 
 function getXAxisInterval(dataLength: number) {
@@ -22,9 +23,10 @@ function getXAxisInterval(dataLength: number) {
   return Math.max(Math.floor(dataLength / 8), 1);
 }
 
-export function ScenarioComparisonChart({ data, series, valueFormatter }: Readonly<ScenarioComparisonChartProps>) {
+export function ScenarioComparisonChart({ data, series, valueFormatter, axisTickFormatter }: Readonly<ScenarioComparisonChartProps>) {
   const labelMap = Object.fromEntries(series.map((item) => [item.key, item.label]));
   const formatValue = valueFormatter ?? ((value: number) => `$${value.toLocaleString()}`);
+  const formatAxisTick = axisTickFormatter ?? ((value: number) => `$${Math.round(value / 1000)}k`);
 
   return (
     <div className="h-80 w-full">
@@ -40,7 +42,7 @@ export function ScenarioComparisonChart({ data, series, valueFormatter }: Readon
           />
           <YAxis
             stroke="#57657a"
-            tickFormatter={(value) => `$${Math.round(value / 1000)}k`}
+            tickFormatter={formatAxisTick}
             tickLine={false}
             axisLine={false}
           />

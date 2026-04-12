@@ -34,21 +34,21 @@
 
 ## Calculation Engine
 
-- [ ] Expand serviceability logic so expenses, liabilities, rental shading, bonus shading, and HECS/HELP loadings are all traceable in outputs.
-- [ ] Add a dedicated repayment calculator flow beyond the borrowing power calculation.
-- [ ] Add offset-vs-no-offset calculation support where product features allow it.
+- [x] Expand serviceability logic so expenses, liabilities, rental shading, bonus shading, and HECS/HELP loadings are all traceable in outputs.
+- [x] Add a dedicated repayment calculator flow beyond the borrowing power calculation.
+- [x] Add offset-vs-no-offset calculation support where product features allow it.
 - [x] Add cashflow projection logic over time.
-- [ ] Add debt and LVR trajectory calculations.
-- [ ] Add interest rate sensitivity calculations for scenario stress testing.
-- [ ] Move any remaining hard-coded lending assumptions into config-driven values.
-- [ ] Add rule-driven interpretation notes so results explain why capacity increased or decreased.
+- [x] Add debt and LVR trajectory calculations.
+- [x] Add interest rate sensitivity calculations for scenario stress testing.
+- [x] Move any remaining hard-coded lending assumptions into config-driven values.
+- [x] Add rule-driven interpretation notes so results explain why capacity increased or decreased.
 
 ## Results And Charts
 
 - [x] Expand the results page to show borrowing power, repayments, monthly surplus, assessed rate, assets, liabilities, and net position clearly.
 - [x] Add cashflow over time charts.
-- [ ] Add debt and LVR trajectory charts.
-- [ ] Add interest rate sensitivity charts.
+- [x] Add debt and LVR trajectory charts.
+- [x] Add interest rate sensitivity charts.
 - [x] Ensure every chart updates in real time from persisted state.
 - [ ] Ensure chart layouts and labels are readable on mobile screens.
 

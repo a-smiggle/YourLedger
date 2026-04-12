@@ -1,4 +1,6 @@
+import { assetProjectionAssumptions, scenarioProjectionAssumptions, taxAssumptions } from "@/config/calculation-assumptions";
 import { calculateMonthlyRepayment } from "@/engine/borrowing-power";
+import { calculateResidentIncomeTax } from "@/engine/tax";
 import { buildScenarioSummaries, resolveBankInstitutions } from "@/engine/scenario-summaries";
 import type {
   Asset,
@@ -11,31 +13,11 @@ import type {
   BankData,
 } from "@/types/domain";
 
-const DEFAULT_CASH_GROWTH_RATE = 4.5;
-const DEFAULT_PROPERTY_GROWTH_RATE = 3;
-const DEFAULT_SUPER_GROWTH_RATE = 7;
-const DEFAULT_OTHER_GROWTH_RATE = 3;
-const MEDICARE_LEVY_RATE = 0.02;
-
-function calculateResidentIncomeTax(taxableIncome: number) {
-  if (taxableIncome <= 18_200) {
-    return 0;
-  }
-
-  if (taxableIncome <= 45_000) {
-    return (taxableIncome - 18_200) * 0.16;
-  }
-
-  if (taxableIncome <= 135_000) {
-    return 4_288 + (taxableIncome - 45_000) * 0.3;
-  }
-
-  if (taxableIncome <= 190_000) {
-    return 31_288 + (taxableIncome - 135_000) * 0.37;
-  }
-
-  return 51_638 + (taxableIncome - 190_000) * 0.45;
-}
+const DEFAULT_CASH_GROWTH_RATE = assetProjectionAssumptions.defaultGrowthByCategory.cash;
+const DEFAULT_PROPERTY_GROWTH_RATE = assetProjectionAssumptions.defaultGrowthByCategory.property;
+const DEFAULT_SUPER_GROWTH_RATE = assetProjectionAssumptions.defaultGrowthByCategory.super;
+const DEFAULT_OTHER_GROWTH_RATE = assetProjectionAssumptions.defaultGrowthByCategory.other;
+const MEDICARE_LEVY_RATE = taxAssumptions.medicareLevyRate;
 
 function calculateMemberAnnualTaxableIncome(member: HouseholdMember) {
   return member.annualGrossIncome + member.annualBonusIncome + member.annualRentalIncome;
@@ -133,6 +115,14 @@ function clampRate(value: number) {
   return Math.max(value, 0);
 }
 
+function calculateLvr(loanAmount: number, securityValue: number) {
+  if (loanAmount <= 0 || securityValue <= 0) {
+    return null;
+  }
+
+  return (loanAmount / securityValue) * 100;
+}
+
 export function buildScenarioProjectionSummaries(
   userData: UserData,
   bankData: BankData,
@@ -206,6 +196,14 @@ export function buildScenarioProjectionSummaries(
       const retainedPropertyEquity = propertyTreatment === "equity-release"
         ? clampToZero(retainedPropertyValue - existingPropertyDebtBalance)
         : 0;
+      const purchaseLvr = calculateLvr(purchaseDebtBalance, targetPropertyValue);
+      const existingPropertyLvr = propertyTreatment === "equity-release"
+        ? calculateLvr(existingPropertyDebtBalance, retainedPropertyValue)
+        : null;
+      const combinedLvr = calculateLvr(
+        purchaseDebtBalance + existingPropertyDebtBalance,
+        targetPropertyValue + (propertyTreatment === "equity-release" ? retainedPropertyValue : 0),
+      );
       const liquidWealth = cashBalance + offsetBalance + superBalance + otherBalance;
 
       timeline.push({
@@ -213,6 +211,9 @@ export function buildScenarioProjectionSummaries(
         totalDebtBalance: Math.round(purchaseDebtBalance + existingPropertyDebtBalance),
         purchaseDebtBalance: Math.round(purchaseDebtBalance),
         existingPropertyDebtBalance: Math.round(existingPropertyDebtBalance),
+        purchaseLvr: purchaseLvr !== null ? Number(purchaseLvr.toFixed(2)) : null,
+        existingPropertyLvr: existingPropertyLvr !== null ? Number(existingPropertyLvr.toFixed(2)) : null,
+        combinedLvr: combinedLvr !== null ? Number(combinedLvr.toFixed(2)) : null,
         offsetBalance: Math.round(offsetBalance),
         cumulativeInterestPaid: Math.round(cumulativeInterestPaid),
         cumulativeInterestSaved: Math.round(cumulativeInterestSaved),
@@ -273,6 +274,9 @@ export function buildScenarioProjectionSummaries(
       projectedInterestPaid: endPoint?.cumulativeInterestPaid ?? 0,
       projectedInterestSaved: endPoint?.cumulativeInterestSaved ?? 0,
       projectedOffsetBalance: endPoint?.offsetBalance ?? 0,
+      projectedPurchaseLvr: endPoint?.purchaseLvr ?? null,
+      projectedExistingPropertyLvr: endPoint?.existingPropertyLvr ?? null,
+      projectedCombinedLvr: endPoint?.combinedLvr ?? null,
       projectedWealth: endPoint?.totalWealth ?? 0,
       timeline,
     };
@@ -283,7 +287,7 @@ export function buildScenarioSensitivitySummaries(
   userData: UserData,
   bankData: BankData,
   horizonMonths = 12,
-  rateAdjustments = [-1, -0.5, 0, 0.5, 1, 2],
+  rateAdjustments = [...scenarioProjectionAssumptions.sensitivityRateAdjustments],
 ): ScenarioSensitivitySummary[] {
   return userData.scenarios.map<ScenarioSensitivitySummary>((scenario) => {
     const points = rateAdjustments.map((rateAdjustmentPercent) => {
