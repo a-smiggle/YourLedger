@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { AppShell } from "@/components/app-shell";
 import { useAppData } from "@/components/app-data-provider";
+import { GeneralInformationNotice } from "@/components/general-information-notice";
 import { PageHero } from "@/components/page-hero";
 import { SectionCard } from "@/components/section-card";
 import { buildProductComparisonSummary, buildScenarioSummaries, resolveBankInstitutions } from "@/engine/scenario-summaries";
@@ -207,7 +208,7 @@ function ProductDetailPanel({
         <div>
           <p className="font-semibold text-ink">Policy snapshot</p>
           <div className="mt-2 space-y-1 leading-6">
-            <p>{lender.profileSummary ?? "Policy summary pending."}</p>
+            <p>{lender.profileSummary ?? "No narrative policy summary is stored for this lender yet. Use the turnaround, assessment buffer, and product settings below as the current comparison inputs."}</p>
             <p>{formatPolicyTurnaround(lender)}</p>
             <p>Assessment buffer {lender.creditPolicy.assessmentBuffer.toFixed(2)}%</p>
           </div>
@@ -429,6 +430,11 @@ export default function LendersPage() {
           eyebrow="Lenders"
           title="Shortlist lenders against the active deal brief and compare which products actually fit the loan you need."
           description="Use the scenario deal setup first, then compare products here by total debt, borrowing headroom, repayment, and offset support before saving a lender to that scenario."
+        />
+
+        <GeneralInformationNotice
+          storageKey="lenders-overview"
+          body="Lender and product comparisons summarise the current stored policy and product data for planning purposes. Always confirm rates, policy, fees, and eligibility with the lender or broker channel before acting on a shortlist."
         />
 
         <SectionCard

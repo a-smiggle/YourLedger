@@ -1,13 +1,16 @@
 export function SponsoredPanel() {
   return (
-    <aside className="rounded-panel bg-surface-high p-6 shadow-ambient">
+    <aside className="rounded-panel border border-dashed border-outline bg-surface-high p-6 shadow-ambient">
       <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted">Sponsored</p>
-      <h3 className="mt-3 text-lg font-bold text-primary">Partner placement</h3>
+      <h3 className="mt-3 text-lg font-bold text-primary">Clearly separated partner content</h3>
       <p className="mt-2 text-sm leading-6 text-muted">
-        This space is reserved for clearly labelled partner content. Sponsored placements remain visually separate from planning information and do not interact with calculator data.
+        Sponsored placements are labelled, visually separated from planning information, and kept outside the calculator workflow. Household inputs, selected scenarios, and calculated results are not passed into this panel.
       </p>
-      <div className="mt-5 rounded-2xl bg-white p-4 text-sm text-muted">
-        Partner message, disclosure wording, and external links will appear here.
+      <div className="mt-5 rounded-2xl border border-outline bg-white p-4 text-sm text-muted">
+        <p className="font-semibold text-ink">Disclosure standard</p>
+        <p className="mt-2 leading-6">
+          Any future partner message shown here should remain informational, clearly disclosed, and independent from scenario rankings, lender comparisons, and recommendation logic.
+        </p>
       </div>
     </aside>
   );

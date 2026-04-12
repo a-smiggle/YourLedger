@@ -2,6 +2,7 @@
 
 import { useAppData } from "@/components/app-data-provider";
 import { AppShell } from "@/components/app-shell";
+import { GeneralInformationNotice } from "@/components/general-information-notice";
 import { MetricCard } from "@/components/metric-card";
 import { SectionCard } from "@/components/section-card";
 import { DashboardSessionPreference } from "@/components/session-navigation";
@@ -27,6 +28,11 @@ export default function DashboardPage() {
             Review indicative household borrowing outcomes, compare scenarios, and keep planning information within the browser.
           </p>
         </section>
+
+        <GeneralInformationNotice
+          storageKey="dashboard-overview"
+          body="Dashboard cards and charts are indicative planning outputs drawn from the current household profile and saved scenarios. Use them to frame the next discussion, not as a credit decision or personal advice."
+        />
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <MetricCard
@@ -54,7 +60,7 @@ export default function DashboardPage() {
         <div className="grid gap-6">
           <SectionCard
             title="Scenario comparison"
-            subtitle="Recharts is wired in so the base app can support live comparisons once form state is connected."
+            subtitle="Compare live scenario outcomes from the current saved profile so borrowing headroom and debt structure are easier to review side by side."
           >
             <BorrowingPowerChart scenarios={scenarioSummaries} />
           </SectionCard>

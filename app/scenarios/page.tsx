@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { AppShell } from "@/components/app-shell";
 import { useAppData } from "@/components/app-data-provider";
+import { GeneralInformationNotice } from "@/components/general-information-notice";
 import { PageHero } from "@/components/page-hero";
 import { SectionCard } from "@/components/section-card";
 import { DealFitChart } from "@/charts/deal-fit-chart";
@@ -273,6 +274,11 @@ export default function ScenariosPage() {
           eyebrow="Scenarios"
           title="Define the deal first: property target, funding mix, and offset plan before you shortlist lenders."
           description="Use this step to set the property target, decide whether the current property is kept or sold, then shape cash, equity release, refinance debt, and offset position. The lenders step then compares products against that debt structure."
+        />
+
+        <GeneralInformationNotice
+          storageKey="scenarios-overview"
+          body="Scenario comparisons show how the current deal structure interacts with household capacity and stored lender settings. They are planning outputs only and should be rechecked once product selection, valuation, and policy interpretation are confirmed."
         />
 
         <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">

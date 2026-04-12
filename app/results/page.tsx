@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { AppShell } from "@/components/app-shell";
 import { useAppData } from "@/components/app-data-provider";
+import { GeneralInformationNotice } from "@/components/general-information-notice";
 import { MetricCard } from "@/components/metric-card";
 import { PageHero } from "@/components/page-hero";
 import { SectionCard } from "@/components/section-card";
@@ -299,6 +300,11 @@ export default function ResultsPage() {
           eyebrow="Results"
           title="Compare every saved scenario over the next 30 years before drilling into one deal in detail."
           description="Results now open on an all-scenario view first. Every timeline chart uses monthly points across the next 30 years, while the selected scenario detail remains available further down the page."
+        />
+
+        <GeneralInformationNotice
+          storageKey="results-overview"
+          body="Results combine current profile data, saved scenario settings, and stored lender assumptions into indicative planning outputs. Treat every chart, repayment figure, and interpretation note as preparation for a formal review rather than a final recommendation."
         />
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
@@ -1076,8 +1082,8 @@ export default function ResultsPage() {
               ))}
 
               <div className="rounded-[1.5rem] border border-outline bg-white p-5">
-                <p className="font-semibold text-ink">General information only</p>
-                <p className="mt-2 leading-6">Outputs remain indicative planning estimates. Product fit, debt projections, and serviceability summaries do not replace formal credit assessment or personal financial advice.</p>
+                <p className="font-semibold text-ink">Formal review still required</p>
+                <p className="mt-2 leading-6">Use the scenario ranking and serviceability trace to prepare questions, then confirm the recommendation against current lender policy, fees, valuation position, and personal advice requirements.</p>
               </div>
             </div>
           </SectionCard>

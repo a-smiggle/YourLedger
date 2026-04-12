@@ -62,10 +62,10 @@
 
 ## Privacy, Transparency, And Content
 
-- [ ] Expand the How This Works page so it clearly explains calculation logic, buffers, assumptions, privacy, and data storage.
-- [ ] Add a clear general-information disclaimer anywhere results are shown.
-- [ ] Review all routes for placeholder or scaffold copy and replace it with finished product content.
-- [ ] Ensure sponsored areas stay visually distinct and never interact with calculator data.
+- [x] Expand the How This Works page so it clearly explains calculation logic, buffers, assumptions, privacy, and data storage.
+- [x] Add a clear general-information disclaimer anywhere results are shown.
+- [x] Review all routes for placeholder or scaffold copy and replace it with finished product content.
+- [x] Ensure sponsored areas stay visually distinct and never interact with calculator data.
 
 ## UX, Accessibility, And Polish
 
